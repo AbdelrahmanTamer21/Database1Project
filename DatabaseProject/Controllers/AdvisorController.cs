@@ -22,6 +22,7 @@ namespace DatabaseProject.Controllers
         }
 
         public ActionResult Register(FormCollection form) {
+            /*
             string name = form["name"];
             string email = form["email"];
             string password = form["password"];
@@ -30,9 +31,10 @@ namespace DatabaseProject.Controllers
 
             Advisor advisor = new Advisor(name, email, password, office);
             advisor.advisor_id = registerAdvisor(advisor);
-
-            Session["advisor"] = advisor;
-
+            */
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            con.Open();
+            con.Close();
             return View();
         }
 
