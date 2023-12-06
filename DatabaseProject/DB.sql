@@ -982,6 +982,8 @@ CREATE FUNCTION [FN_StudentViewGP]
    inner join GradPlan_Course on Graduation_Plan.plan_id = GradPlan_Course.plan_id and Graduation_Plan.semester_code = GradPlan_Course.semester_code
    inner join Course on Course.course_id = GradPlan_Course.course_id
    )
+
+SELECT * FROM FN_StudentViewGP(1)
 --------------------------------------------------------------------
 ---------------------View first upcoming installment deadline --------------------------------------------------
 --Output: deadline date of first upcoming installment
