@@ -1,9 +1,15 @@
 ﻿using DatabaseProject.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
+using System.Xml.Linq;
 
 namespace DatabaseProject.Controllers
 {
@@ -27,7 +33,7 @@ namespace DatabaseProject.Controllers
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     //set up the parameters
-                    cmd.Parameters.Add("@courseID", SqlDbType.VarChar, 40);
+                    cmd.Parameters.Add("@courseID", SqlDbType.Int);
 
                     //set parameter values
                     cmd.Parameters["@courseID"].Value = course.course_id;
