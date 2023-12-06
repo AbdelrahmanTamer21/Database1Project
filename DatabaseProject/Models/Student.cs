@@ -21,9 +21,9 @@ namespace DatabaseProject.Models
         public int semester { get; set; }
         public int acquired_hours { get; set; }
         public int assigned_hours { get; set; }
-        public int advisor_id { get; set; }
+        public Advisor advisor { get; set; }
 
-        public Student(int student_id, string f_name, string l_name, string password, decimal gpa, string faculty, string email, string major, bool financial_status, int semester, int acquired_hours, int assigned_hours, int advisor_id)
+        public Student(int student_id, string f_name, string l_name, string password, decimal gpa, string faculty, string email, string major, bool financial_status, int semester, int acquired_hours, int assigned_hours, Advisor advisor)
         {
             this.student_id = student_id;
             this.f_name = f_name;
@@ -37,10 +37,10 @@ namespace DatabaseProject.Models
             this.semester = semester;
             this.acquired_hours = acquired_hours;
             this.assigned_hours = assigned_hours;
-            this.advisor_id = advisor_id;
+            this.advisor = advisor;
         }
 
-        public Student(string f_name, string l_name, string password, decimal gpa, string faculty, string email, string major, bool financial_status, int semester, int acquired_hours, int assigned_hours, int advisor_id)
+        public Student(string f_name, string l_name, string password, decimal gpa, string faculty, string email, string major, bool financial_status, int semester, int acquired_hours, int assigned_hours, int advisor)
         {
             this.f_name = f_name;
             this.l_name = l_name;
@@ -53,7 +53,7 @@ namespace DatabaseProject.Models
             this.semester = semester;
             this.acquired_hours = acquired_hours;
             this.assigned_hours = assigned_hours;
-            this.advisor_id = advisor_id;
+            this.advisor = advisor;
         }
 
     }
