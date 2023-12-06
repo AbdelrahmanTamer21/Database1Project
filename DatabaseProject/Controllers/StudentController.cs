@@ -18,6 +18,17 @@ namespace DatabaseProject.Controllers
             return View();
         }
 
+        public ActionResult Register()
+        {
+
+            return View();
+        }
+
+        public ActionResult Login()
+        {
+            return View();
+        }
+
         public int registerStudent(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);

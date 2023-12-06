@@ -47,5 +47,37 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
-    }
+        public void addMakeUpExam(FormCollection form)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdminAddExam", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                using (cmd)
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    //set up the parameters
+                    cmd.Parameters.Add("@Type", SqlDbType.VarChar,40);
+                    cmd.Parameters.Add("@date", SqlDbType.DateTime);
+                    cmd.Parameters.Add("@courseID", SqlDbType.Int);
+
+
+                    //set parameter values
+                    cmd.Parameters["@Type"].Value = form["type"];
+                    cmd.Parameters["@date"].Value = form["date"];
+                    cmd.Parameters["@courseID"].Value = form["course_id"];
+
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    con.Close();
+                }
+            }
+        }
+    }  
 }
+
