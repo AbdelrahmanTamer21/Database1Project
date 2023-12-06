@@ -7,6 +7,8 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml.Linq;
+using System.Runtime.InteropServices;
 
 namespace DatabaseProject.Controllers
 {
@@ -101,7 +103,97 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
+        public ActionResult optionalCourse(FormCollection form)
+        {
 
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM dbo.Procedures_ViewOptionalCourse", con);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.Add("@student_id", SqlDbType.Int);
+                cmd.Parameters.Add("@current_semester_code", SqlDbType.Int);
+                cmd.Parameters["@student_id"].Value = form["student_id"];
+                cmd.Parameters["@current_semester_code"].Value = form["current_semester_code"];
+
+                List<Course> courses = new List<Course>();
+
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    courses.Add(
+                        new Course(Convert.ToInt32(rdr["course_id"]), rdr["name"].ToString()
+                            ));
+                }
+                rdr.Close();
+                con.Close();
+            }
+
+            return View();
+        }
+        public ActionResult availableCourses(FormCollection form)
+        {
+
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM dbo.FN_SemsterAvailableCourses(@semstercode)", con);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.Add("@student_id", SqlDbType.Int);
+                cmd.Parameters.Add("@current_semester_code", SqlDbType.Int);
+                cmd.Parameters["@student_id"].Value = form["student_id"];
+                cmd.Parameters["@current_semester_code"].Value = form["current_semester_code"];
+
+                List<Course> courses = new List<Course>();
+
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    courses.Add(
+                        new Course(Convert.ToInt32(rdr["course_id"]), rdr["name"].ToString()
+                            ));
+                }
+                rdr.Close();
+                con.Close();
+            }
+
+            return View();
+        }
+        public ActionResult requiredCourses(FormCollection form)
+        {
+
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM dbo.Procedures_ViewRequiredCourses", con);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.Add("@semstercode", SqlDbType.Int);
+                cmd.Parameters["@semstercode"].Value = form["semstercode"];
+
+                List<Course> courses = new List<Course>();
+
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    courses.Add(
+                        new Course(Convert.ToInt32(rdr["course_id"]), rdr["name"].ToString()
+                            ));
+                }
+                rdr.Close();
+                con.Close();
+            }
+
+            return View();
+        }
         public int get_student_id() { return 0; }
 
         ///////////// PART 2 /////////////
@@ -134,6 +226,5 @@ namespace DatabaseProject.Controllers
 
             return View();
         }
-
     }
 }
