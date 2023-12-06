@@ -1,9 +1,15 @@
 ﻿using DatabaseProject.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
+using System.Xml.Linq;
 
 namespace DatabaseProject.Controllers
 {
@@ -15,7 +21,7 @@ namespace DatabaseProject.Controllers
             return View();
         }
 
-        public void deleteCourse(Course course)
+        public void deleteCourse(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -27,10 +33,10 @@ namespace DatabaseProject.Controllers
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     //set up the parameters
-                    cmd.Parameters.Add("@courseID", SqlDbType.VarChar, 40);
+                    cmd.Parameters.Add("@courseID", SqlDbType.Int);
 
                     //set parameter values
-                    cmd.Parameters["@courseID"].Value = course.course_id;
+                    cmd.Parameters["@courseID"].Value = form["course_id"];
                   
 
                     //open connection and execute stored procedure
