@@ -21,24 +21,21 @@ namespace DatabaseProject.Controllers
             return View();
         }
 
-        public ActionResult Register(FormCollection form) {
-            /*
+        public ActionResult Register() {
+
+            return View();
+        }
+
+        public ActionResult Login() 
+        {
+            return View();
+        }
+
+        public int registerAdvisor(FormCollection form) {
             string name = form["name"];
             string email = form["email"];
             string password = form["password"];
             string office = form["office"];
-            
-
-            Advisor advisor = new Advisor(name, email, password, office);
-            advisor.advisor_id = registerAdvisor(advisor);
-            */
-            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
-            con.Open();
-            con.Close();
-            return View();
-        }
-
-        public int registerAdvisor(Advisor advisor) {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
             {
@@ -46,33 +43,39 @@ namespace DatabaseProject.Controllers
                 cmd.CommandType = CommandType.StoredProcedure;
                 using (cmd)
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
 
                     //set up the parameters
-                    cmd.Parameters.Add("@name", SqlDbType.VarChar, 40);
-                    cmd.Parameters.Add("@password", SqlDbType.VarChar, 40);
-                    cmd.Parameters.Add("@email", SqlDbType.VarChar);
-                    cmd.Parameters.Add("@office", SqlDbType.VarChar, 40);
+                    cmd.Parameters.Add("@advisor_name", SqlDbType.VarChar, 20);
+                    cmd.Parameters.Add("@password", SqlDbType.VarChar, 20);
+                    cmd.Parameters.Add("@email", SqlDbType.VarChar, 50);
+                    cmd.Parameters.Add("@office", SqlDbType.VarChar, 20);
                     //state ouput variable
-                    cmd.Parameters.Add("@advisor_id", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add("@Advisor_id", SqlDbType.Int).Direction = ParameterDirection.Output;
 
                     //set parameter values
-                    cmd.Parameters["@name"].Value = advisor.name;
-                    cmd.Parameters["@password"].Value = advisor.password;
-                    cmd.Parameters["@email"].Value = advisor.email;
-                    cmd.Parameters["@office"].Value = advisor.office;
+                    cmd.Parameters["@advisor_name"].Value = name;
+                    cmd.Parameters["@password"].Value = password;
+                    cmd.Parameters["@email"].Value = email;
+                    cmd.Parameters["@office"].Value = office;
 
                     //open connection and execute stored procedure
                     con.Open();
                     cmd.ExecuteNonQuery();
 
                     //get the output variable
-                    int id = Convert.ToInt32(cmd.Parameters["@advisor_id"].Value);
+                    int id = Convert.ToInt32(cmd.Parameters["@Advisor_id"].Value);
+
+                    HttpCookie userInfo = new HttpCookie("userInfo");
+                    userInfo["userID"] = id.ToString();
+                    userInfo["type"] = "Student";
+                    Response.Cookies.Add(userInfo);
 
                     con.Close();
                     return id;
                 }
             }
         }
+
+        
     }
 }
