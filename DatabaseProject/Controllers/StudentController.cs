@@ -15,7 +15,7 @@ namespace DatabaseProject.Controllers
             return View();
         }
     }
-    public int registerStudent(Student student)
+    public int registerStudent(FormCollection form)
     {
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
         using (con)
@@ -38,13 +38,13 @@ namespace DatabaseProject.Controllers
                 cmd.Parameters.Add("@Student_id", SqlDbType.Int).Direction = ParameterDirection.Output;
 
                 //set parameter values
-                cmd.Parameters["@first_name"].Value = student.f_name;
-                cmd.Parameters["@last_name"].Value = student.l_name;
-                cmd.Parameters["@password"].Value = student.password;
-                cmd.Parameters["@faculty"].Value = student.faculty;
-                cmd.Parameters["@email"].Value = student.email;
-                cmd.Parameters["@Semester"].Value = student.Semester;
-                cmd.Parameters["@major"].Value = student.major;
+                cmd.Parameters["@first_name"].Value = form["f_name"];
+                cmd.Parameters["@last_name"].Value = form["l_name"];
+                cmd.Parameters["@password"].Value = form["password"];
+                cmd.Parameters["@faculty"].Value = form["faculty"];
+                cmd.Parameters["@email"].Value = form["email"];
+                cmd.Parameters["@Semester"].Value = form["Semester"];
+                cmd.Parameters["@major"].Value = form["major"];
 
                 //open connection and execute stored procedure
                 con.Open();
@@ -55,6 +55,35 @@ namespace DatabaseProject.Controllers
 
                 con.Close();
                 return id;
+            }
+        }
+    }
+    public void AddStudentPhone(FormCollection form)
+    {
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+        using (con)
+        {
+            SqlCommand cmd = new SqlCommand("dbo.Procedures_StudentaddMobile", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            using (cmd)
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                //set up the parameters
+                cmd.Parameters.Add("@StudentID", SqlDbType.VarChar, 40);
+                cmd.Parameters.Add("@mobile_number", SqlDbType.VarChar, 40);
+
+
+                //set parameter values
+                cmd.Parameters["@StudentID"].Value = form["student_id"];
+                cmd.Parameters["@mobile_number"].Value = form["phone_number"];
+
+
+                //open connection and execute stored procedure
+                con.Open();
+                cmd.ExecuteNonQuery();
+
+                con.Close();
             }
         }
     }
