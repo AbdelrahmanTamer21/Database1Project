@@ -21,7 +21,7 @@ namespace DatabaseProject.Controllers
             return View();
         }
 
-        public void deleteCourse(Course course)
+        public void deleteCourse(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -36,7 +36,7 @@ namespace DatabaseProject.Controllers
                     cmd.Parameters.Add("@courseID", SqlDbType.Int);
 
                     //set parameter values
-                    cmd.Parameters["@courseID"].Value = course.course_id;
+                    cmd.Parameters["@courseID"].Value = form["course_id"];
                   
 
                     //open connection and execute stored procedure
