@@ -13,6 +13,9 @@ namespace DatabaseProject.Models
         public string office { get; set; }
         public string password { get; set; }
 
+        public Advisor()
+        {
+        }
         public Advisor(string name, string email, string password, string office)
         {
             this.name = name;
