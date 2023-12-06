@@ -1,4 +1,4 @@
-﻿@model IEnumerable<DatabaseProject.Models.GraduationPlan>
+﻿@model IEnumerable<DatabaseProject.Models.GraduationPlanSemester>
 
 @{
     ViewBag.Title = "GraduationPlan";
@@ -12,10 +12,10 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.plan_id)
+            @Html.DisplayNameFor(model => model.semester_code)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.expected_grad_date)
+            @Html.DisplayNameFor(model => model.credit_hours)
         </th>
         <th></th>
     </tr>
@@ -23,10 +23,10 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.plan_id)
+            @Html.DisplayFor(modelItem => item.semester_code)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.expected_grad_date)
+            @Html.DisplayFor(modelItem => item.credit_hours)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
