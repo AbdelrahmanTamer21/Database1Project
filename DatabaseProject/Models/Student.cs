@@ -40,7 +40,7 @@ namespace DatabaseProject.Models
             this.advisor = advisor;
         }
 
-        public Student(string f_name, string l_name, string password, decimal gpa, string faculty, string email, string major, bool financial_status, int semester, int acquired_hours, int assigned_hours, int advisor)
+        public Student(string f_name, string l_name, string password, decimal gpa, string faculty, string email, string major, bool financial_status, int semester, int acquired_hours, int assigned_hours, Advisor advisor)
         {
             this.f_name = f_name;
             this.l_name = l_name;
@@ -54,6 +54,10 @@ namespace DatabaseProject.Models
             this.acquired_hours = acquired_hours;
             this.assigned_hours = assigned_hours;
             this.advisor = advisor;
+        }
+
+        public Student()
+        {
         }
 
     }

@@ -113,9 +113,51 @@ namespace DatabaseProject.Controllers
 
                 con.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
+
+                GraduationPlan graduationPlan = new GraduationPlan();
+
+                if (rdr.Read()) { 
+                    graduationPlan.plan_id = Convert.ToInt32(rdr["plan_id"]);
+                    graduationPlan.expected_grad_date = rdr["expected_grad_date"].ToString();
+                    graduationPlan.student = new Student();
+                    graduationPlan.student.student_id = Convert.ToInt32(rdr["student_id"]);
+                    graduationPlan.student.f_name = rdr["Student_name"].ToString().Split(' ')[0];
+                    graduationPlan.student.l_name = rdr["Student_name"].ToString().Split(' ')[1];
+                    
+                    // Semester
+                    GraduationPlanSemester semester = new GraduationPlanSemester();
+                    semester.semester_code = rdr["semester_code"].ToString();
+                    semester.credit_hours = Convert.ToInt32(rdr["credit_hours"]);
+                    semester.advisor = new Advisor();
+                    semester.advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
+                    semester.courses = new List<Course>();
+                    semester.courses.Add(new Course(Convert.ToInt32(rdr["course_id"]), rdr["course_name"].ToString()));
+                 
+                } else
+                {
+                    rdr.Close();
+                    con.Close();
+                    return null;
+                }
+
                 while (rdr.Read())
                 {
-                    Console.WriteLine(rdr);
+                    // Semester
+                    if (rdr["semester_code"].ToString() != graduationPlan.semesters[graduationPlan.semesters.Count - 1].semester_code)
+                    {
+                        GraduationPlanSemester semester = new GraduationPlanSemester();
+                        semester.semester_code = rdr["semester_code"].ToString();
+                        semester.credit_hours = Convert.ToInt32(rdr["credit_hours"]);
+                        semester.advisor = new Advisor();
+                        semester.advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
+                        semester.courses = new List<Course>();
+                        semester.courses.Add(new Course(Convert.ToInt32(rdr["course_id"]), rdr["course_name"].ToString()));
+                        graduationPlan.semesters.Add(semester);
+                    }
+                    else
+                    {
+                        graduationPlan.semesters[graduationPlan.semesters.Count - 1].courses.Add(new Course(Convert.ToInt32(rdr["course_id"]), rdr["course_name"].ToString()));
+                    }
                 }
                 rdr.Close();
                 con.Close();
