@@ -246,6 +246,7 @@ namespace DatabaseProject.Controllers
                 {
                     rdr.Close();
                     con.Close();
+
                     return View();
                 }
 
@@ -270,7 +271,70 @@ namespace DatabaseProject.Controllers
                 }
                 rdr.Close();
                 con.Close();
+
                 return View(graduationPlan);
+            }
+        }
+
+        // B
+        // View the upcoming not paid installment.
+        public ActionResult UpcomingInstallment()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.FN_StudentUpcoming_installment", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.Add("@student_id", SqlDbType.Int);
+                cmd.Parameters["@student_id"].Value = 1;
+
+                cmd.Parameters.Add("@installdeadline", SqlDbType.Date).Direction = ParameterDirection.ReturnValue;
+
+                con.Open();
+                cmd.ExecuteNonQuery();
+                
+                var date = cmd.Parameters["@installdeadline"].Value.ToString();
+
+                con.Close();
+                return View(date);
+            }
+        }
+
+        // C
+        // View all courses along with their exams details.
+        public ActionResult AllCourses()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Courses_MakeupExams", con);
+                cmd.CommandType = CommandType.Text;
+
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+
+                List<MakeUp_Exam> courses = new List<MakeUp_Exam>();
+
+                while (rdr.Read())
+                {
+                    Course course = new Course();
+                    course.name = rdr["name"].ToString();
+                    course.semester = Convert.ToInt32(rdr["semester"]);
+
+                    MakeUp_Exam makeUp_Exam = new MakeUp_Exam();
+                    makeUp_Exam.exam_id = Convert.ToInt32(rdr["exam_id"]);
+                    makeUp_Exam.date = rdr["date"].ToString();
+                    makeUp_Exam.type = rdr["type"].ToString();
+                    makeUp_Exam.course = course;
+
+                    courses.Add(makeUp_Exam);
+                }
+                rdr.Close();
+                con.Close();
+
+                return View(courses);
             }
         }
     }
