@@ -11,6 +11,8 @@ namespace DatabaseProject.Models
         public int credit_hours { get; set; }
         public int semester { get; set; }
 
+        public Course(){ }
+
         public Course(int course_id, string name, string major, bool is_offered, int credit_hours, int semester)
         {
             this.course_id = course_id;
