@@ -104,7 +104,7 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
-        public ActionResult optionalCourse(FormCollection form)
+        public ActionResult optionalCourse()
         {
 
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -116,8 +116,8 @@ namespace DatabaseProject.Controllers
 
                 cmd.Parameters.Add("@student_id", SqlDbType.Int);
                 cmd.Parameters.Add("@current_semester_code", SqlDbType.Int);
-                cmd.Parameters["@student_id"].Value = form["student_id"];
-                cmd.Parameters["@current_semester_code"].Value = form["current_semester_code"];
+                cmd.Parameters["@student_id"].Value = 1;
+                cmd.Parameters["@current_semester_code"].Value = "W23";
 
                 List<Course> courses = new List<Course>();
 
@@ -130,9 +130,10 @@ namespace DatabaseProject.Controllers
                 }
                 rdr.Close();
                 con.Close();
+                
+                return View(courses);
             }
 
-            return View();
         }
         public ActionResult availableCourses(FormCollection form)
         {
@@ -161,9 +162,10 @@ namespace DatabaseProject.Controllers
                 }
                 rdr.Close();
                 con.Close();
+            
+                return View(courses);
             }
 
-            return View();
         }
         public ActionResult requiredCourses(FormCollection form)
         {
@@ -190,11 +192,11 @@ namespace DatabaseProject.Controllers
                 }
                 rdr.Close();
                 con.Close();
+            
+                return View(courses);
             }
 
-            return View();
         }
-        public int get_student_id() { return 0; }
 
         ///////////// PART 2 /////////////
 
@@ -202,7 +204,6 @@ namespace DatabaseProject.Controllers
         // View his/her graduation plan along with his/her assigned courses.
         public ActionResult GraduationPlan()
         {
-            int student_id = get_student_id();
 
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
 
