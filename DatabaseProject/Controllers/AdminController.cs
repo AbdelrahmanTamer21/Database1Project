@@ -20,6 +20,7 @@ namespace DatabaseProject.Controllers
         {
             return View();
         }
+        /*
         private List<Advisor> listAllAdvisors()
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -316,6 +317,7 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
+        */
     }  
 }
 

@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Messaging;
 
 namespace DatabaseProject.Controllers
 {
@@ -125,8 +126,7 @@ namespace DatabaseProject.Controllers
                 while (rdr.Read())
                 {
                     courses.Add(
-                        new Course(Convert.ToInt32(rdr["course_id"]), rdr["name"].ToString()
-                            ));
+                        new Course(Convert.ToInt32(rdr["course_id"]), rdr["name"].ToString()));
                 }
                 rdr.Close();
                 con.Close();
@@ -212,14 +212,15 @@ namespace DatabaseProject.Controllers
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.Add("@student_id", SqlDbType.Int);
-                cmd.Parameters["@student_id"].Value = student_id;
+                cmd.Parameters["@student_id"].Value = 1;
 
                 con.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
 
                 GraduationPlan graduationPlan = new GraduationPlan();
 
-                if (rdr.Read()) { 
+                if (rdr.HasRows) {
+                    rdr.Read();
                     graduationPlan.plan_id = Convert.ToInt32(rdr["plan_id"]);
                     graduationPlan.expected_grad_date = rdr["expected_grad_date"].ToString();
                     graduationPlan.student = new Student();
@@ -229,18 +230,22 @@ namespace DatabaseProject.Controllers
                     
                     // Semester
                     GraduationPlanSemester semester = new GraduationPlanSemester();
+
+                    graduationPlan.semesters = new List<GraduationPlanSemester>();
                     semester.semester_code = rdr["semester_code"].ToString();
-                    semester.credit_hours = Convert.ToInt32(rdr["credit_hours"]);
+                    semester.credit_hours = Convert.ToInt32(rdr["semester_credit_hours"]);
                     semester.advisor = new Advisor();
                     semester.advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
                     semester.courses = new List<Course>();
-                    semester.courses.Add(new Course(Convert.ToInt32(rdr["course_id"]), rdr["course_name"].ToString()));
+                    semester.courses.Add(new Course(Convert.ToInt32(rdr["course_id"]), rdr["name"].ToString()));
+
+                    graduationPlan.semesters.Add(semester);
                  
                 } else
                 {
                     rdr.Close();
                     con.Close();
-                    return null;
+                    return View();
                 }
 
                 while (rdr.Read())
@@ -250,23 +255,22 @@ namespace DatabaseProject.Controllers
                     {
                         GraduationPlanSemester semester = new GraduationPlanSemester();
                         semester.semester_code = rdr["semester_code"].ToString();
-                        semester.credit_hours = Convert.ToInt32(rdr["credit_hours"]);
+                        semester.credit_hours = Convert.ToInt32(rdr["semester_credit_hours"]);
                         semester.advisor = new Advisor();
                         semester.advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
                         semester.courses = new List<Course>();
-                        semester.courses.Add(new Course(Convert.ToInt32(rdr["course_id"]), rdr["course_name"].ToString()));
+                        semester.courses.Add(new Course(Convert.ToInt32(rdr["course_id"]), rdr["name"].ToString()));
                         graduationPlan.semesters.Add(semester);
                     }
                     else
                     {
-                        graduationPlan.semesters[graduationPlan.semesters.Count - 1].courses.Add(new Course(Convert.ToInt32(rdr["course_id"]), rdr["course_name"].ToString()));
+                        graduationPlan.semesters[graduationPlan.semesters.Count - 1].courses.Add(new Course(Convert.ToInt32(rdr["course_id"]), rdr["name"].ToString()));
                     }
                 }
                 rdr.Close();
                 con.Close();
+                return View(graduationPlan);
             }
-
-            return View();
         }
     }
 }
