@@ -20,6 +20,7 @@ namespace DatabaseProject.Controllers
         {
             return View();
         }
+        /*
         private List<Advisor> listAllAdvisors()
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -46,7 +47,7 @@ namespace DatabaseProject.Controllers
                             advisor.email = rdr.GetString("email");
                             advisor.password = rdr.GetString("password");
                             advisor.office = rdr.GetString("office");
-                            lstAdviors.add(advisor);
+                            lstAdviors.Add(advisor);
                         }
                     }
                     con.Close();
@@ -94,7 +95,7 @@ namespace DatabaseProject.Controllers
             using (con)
             {
                 SqlCommand cmd = new SqlCommand("Select * from all_Pending_Requests", con);
-                cmd.CommandType = CommandType.text;
+                cmd.CommandType = CommandType.Text;
                 List<Request> lstPendingRequest = new List<Request>();
                 using (cmd)
                 {
@@ -316,6 +317,7 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
+        */
     }  
 }
 

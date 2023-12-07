@@ -65,17 +65,58 @@ namespace DatabaseProject.Controllers
                     //get the output variable
                     int id = Convert.ToInt32(cmd.Parameters["@Advisor_id"].Value);
 
-                    HttpCookie userInfo = new HttpCookie("userInfo");
-                    userInfo["userID"] = id.ToString();
-                    userInfo["type"] = "Student";
-                    Response.Cookies.Add(userInfo);
-
                     con.Close();
                     return id;
                 }
             }
         }
 
-        
+        public ActionResult loginAdvisor(FormCollection form)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT dbo.FN_AdvisorLogin(@advisor_Id,@password) AS Success", con);
+                cmd.CommandType = CommandType.Text;
+                using (cmd)
+                {
+                    //set up the parameters
+                    cmd.Parameters.AddWithValue("@advisor_Id", form["advisor_id"]);
+                    cmd.Parameters.AddWithValue("@password", form["password"]);
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        bool success = Convert.ToBoolean(rdr["Success"]);
+                        if(!success)
+                        {
+                            TempData["LoginError"] = "ID or Password are wrong";
+                            rdr.Close();
+                            con.Close();
+                            return RedirectToAction("Login");
+                        }
+                        else
+                        {
+                            TempData["LoginError"] = null;
+                            rdr.Close();
+                            con.Close();
+
+                            HttpCookie userInfo = new HttpCookie("userInfo");
+                            userInfo["userID"] = form["advisor_id"];
+                            userInfo["type"] = "Student";
+                            Response.Cookies.Add(userInfo);
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    return RedirectToAction("Login");
+                }
+            }
+
+        }
     }
 }
