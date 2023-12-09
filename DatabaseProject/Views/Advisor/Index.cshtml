@@ -12,25 +12,25 @@
             Student ID
         </th>
         <th>
-            Name
+            Full Name
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.gpa)
+            GPA
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.faculty)
+            Faculty
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.major)
+            Major
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.semester)
+            Semester
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.acquired_hours)
+            Acquired Hours
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.assigned_hours)
+            Assigned Hours
         </th>
         <th></th>
     </tr>
@@ -67,6 +67,9 @@
             <td>
                 @Html.ActionLink("GradPlan", "GradPlan", new { student_id = item.student_id }, new { @class = "btn btn-outline-primary" })
             </td>
+            }
+            else {
+                <td></td>
             }
         </tr>
     }

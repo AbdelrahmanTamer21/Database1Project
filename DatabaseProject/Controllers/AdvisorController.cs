@@ -39,16 +39,17 @@ namespace DatabaseProject.Controllers
             return View();
         }
 
-        public ActionResult GradPlan(int strudent_id)
+        public ActionResult GradPlan(int student_id)
+        {
+            return View();
+        }
+
+        public ActionResult InsertGradPlan(int student_id)
         {
             return View();
         }
 
         public int registerAdvisor(FormCollection form) {
-            string name = form["name"];
-            string email = form["email"];
-            string password = form["password"];
-            string office = form["office"];
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
             {
@@ -58,18 +59,12 @@ namespace DatabaseProject.Controllers
                 {
 
                     //set up the parameters
-                    cmd.Parameters.Add("@advisor_name", SqlDbType.VarChar, 20);
-                    cmd.Parameters.Add("@password", SqlDbType.VarChar, 20);
-                    cmd.Parameters.Add("@email", SqlDbType.VarChar, 50);
-                    cmd.Parameters.Add("@office", SqlDbType.VarChar, 20);
+                    cmd.Parameters.AddWithValue("@advisor_name", form["name"]);
+                    cmd.Parameters.AddWithValue("@password", form["password"]);
+                    cmd.Parameters.AddWithValue("@email", form["email"]);
+                    cmd.Parameters.AddWithValue("@office", form["office"]);
                     //state ouput variable
                     cmd.Parameters.Add("@Advisor_id", SqlDbType.Int).Direction = ParameterDirection.Output;
-
-                    //set parameter values
-                    cmd.Parameters["@advisor_name"].Value = name;
-                    cmd.Parameters["@password"].Value = password;
-                    cmd.Parameters["@email"].Value = email;
-                    cmd.Parameters["@office"].Value = office;
 
                     //open connection and execute stored procedure
                     con.Open();
@@ -177,7 +172,29 @@ namespace DatabaseProject.Controllers
 
         public ActionResult insertGradPlan(int student_id,FormCollection form)
         {
-            return RedirectToAction("index");
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorCreateGP", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                using (cmd)
+                {
+
+                    //set up the parameters
+                    cmd.Parameters.AddWithValue("@Semester_code", form["Semester_code"]);
+                    cmd.Parameters.AddWithValue("@expected_graduation_date", form["expected_graduation_date"]);
+                    cmd.Parameters.AddWithValue("@sem_credit_hours", form["credit_hours"]);
+                    cmd.Parameters.AddWithValue("@advisor_id", Session["userID"]);
+                    cmd.Parameters.AddWithValue("@student_id", student_id);
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    con.Close();
+                }
+            }
+            return RedirectToAction("GradPlan", new { student_id = student_id});
         }
     }
 }
