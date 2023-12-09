@@ -222,7 +222,6 @@ namespace DatabaseProject.Controllers
 
                 if (rdr.HasRows) {
                     rdr.Read();
-                    graduationPlan.plan_id = Convert.ToInt32(rdr["plan_id"]);
                     graduationPlan.expected_grad_date = rdr["expected_grad_date"].ToString();
                     graduationPlan.student = new Student();
                     graduationPlan.student.student_id = Convert.ToInt32(rdr["student_id"]);
@@ -233,6 +232,7 @@ namespace DatabaseProject.Controllers
                     GraduationPlanSemester semester = new GraduationPlanSemester();
 
                     graduationPlan.semesters = new List<GraduationPlanSemester>();
+                    semester.plan_id = Convert.ToInt32(rdr["plan_id"]);
                     semester.semester_code = rdr["semester_code"].ToString();
                     semester.credit_hours = Convert.ToInt32(rdr["semester_credit_hours"]);
                     semester.advisor = new Advisor();
@@ -256,6 +256,7 @@ namespace DatabaseProject.Controllers
                     if (rdr["semester_code"].ToString() != graduationPlan.semesters[graduationPlan.semesters.Count - 1].semester_code)
                     {
                         GraduationPlanSemester semester = new GraduationPlanSemester();
+                        semester.plan_id = Convert.ToInt32(rdr["plan_id"]);
                         semester.semester_code = rdr["semester_code"].ToString();
                         semester.credit_hours = Convert.ToInt32(rdr["semester_credit_hours"]);
                         semester.advisor = new Advisor();

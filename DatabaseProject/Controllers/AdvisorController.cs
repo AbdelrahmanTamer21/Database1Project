@@ -18,7 +18,15 @@ namespace DatabaseProject.Controllers
         // GET: Advisor
         public ActionResult Index()
         {
-            return View();
+            if (Session["userID"] != null && Session["type"] == "Advisor")
+            {
+                List<Student> students = getAdvisingStudents(Convert.ToInt32(Session["userID"]));
+                return View(students);
+            }
+            else
+            {
+                return View(new List<Student>());
+            }
         }
 
         public ActionResult Register() {
@@ -27,6 +35,11 @@ namespace DatabaseProject.Controllers
         }
 
         public ActionResult Login() 
+        {
+            return View();
+        }
+
+        public ActionResult GradPlan(int strudent_id)
         {
             return View();
         }
@@ -106,10 +119,8 @@ namespace DatabaseProject.Controllers
                             rdr.Close();
                             con.Close();
 
-                            HttpCookie userInfo = new HttpCookie("userInfo");
-                            userInfo["userID"] = form["advisor_id"];
-                            userInfo["type"] = "Student";
-                            Response.Cookies.Add(userInfo);
+                            Session["userID"] = form["advisor_id"];
+                            Session["type"] = "Advisor";
                             return RedirectToAction("Index");
                         }
                     }
@@ -117,6 +128,56 @@ namespace DatabaseProject.Controllers
                 }
             }
 
+        }
+
+        public List<Student> getAdvisingStudents(int id)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Student WHERE advisor_id = @advisor_id", con);
+                cmd.CommandType = CommandType.Text;
+                List<Student> lstStudent = new List<Student>();
+                using (cmd)
+                {
+                    //set up parameteres
+                    cmd.Parameters.AddWithValue("@advisor_id", id);
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            Student student = new Student();
+                            student.student_id = Convert.ToInt32(rdr["student_id"]);
+                            student.f_name = rdr["f_name"].ToString();
+                            student.l_name = rdr["l_name"].ToString();
+                            student.password = rdr["password"].ToString();
+                            student.gpa = Convert.ToDecimal(rdr["gpa"]);
+                            student.faculty = rdr["faculty"].ToString();
+                            student.email = rdr["email"].ToString();
+                            student.major = rdr["major"].ToString();
+                            student.financial_status = Convert.ToBoolean(rdr["financial_status"]);
+                            student.semester = Convert.ToInt16(rdr["semester"]);
+                            student.acquired_hours = Convert.ToInt16(rdr["acquired_hours"]);
+                            student.assigned_hours = Convert.ToInt16(rdr["assigned_hours"]);
+                            student.advisor = new Advisor();
+                            student.advisor.advisor_id = Convert.ToInt16(rdr["advisor_id"]);
+                            lstStudent.Add(student);
+                        }
+                    }
+                    con.Close();
+                    return lstStudent;
+                }
+            }
+    }
+
+        public ActionResult insertGradPlan(int student_id,FormCollection form)
+        {
+            return RedirectToAction("index");
         }
     }
 }

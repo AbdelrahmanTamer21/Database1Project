@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
+using System.Drawing;
 using System.Linq;
 using System.Web;
 using System.Web.Helpers;
@@ -20,13 +21,32 @@ namespace DatabaseProject.Controllers
         {
             return View();
         }
-        /*
+        
+        public ActionResult Login() {
+            return View();
+        }
+
+        public ActionResult loginAdmin(FormCollection form) {
+            if (form["admin_id"] == "1" && form["password"] == "pass") {
+                TempData["LoginError"] = null;
+
+                Session["userID"] = form["admin_id"];
+                Session["type"] = "Admin";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["LoginError"] = "ID or Password are wrong";
+                return RedirectToAction("Login");
+            }
+        
+        }
         private List<Advisor> listAllAdvisors()
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
             {
-                SqlCommand cmd = new SqlCommand("Select * from Advisor", con);
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdminListAdvisors", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 List<Advisor> lstAdviors = new List<Advisor>();
                 using (cmd)
@@ -42,11 +62,11 @@ namespace DatabaseProject.Controllers
                         while (rdr.Read())
                         {
                             Advisor advisor = new Advisor();
-                            advisor.advisor_id = rdr.GetInt32("advisor_id");
-                            advisor.name = rdr.GetString("Name");
-                            advisor.email = rdr.GetString("email");
-                            advisor.password = rdr.GetString("password");
-                            advisor.office = rdr.GetString("office");
+                            advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
+                            advisor.name = rdr["advisor_name"].ToString();
+                            advisor.email = rdr["email"].ToString();
+                            advisor.password = rdr["password"].ToString();
+                            advisor.office = rdr["office"].ToString();
                             lstAdviors.Add(advisor);
                         }
                     }
@@ -60,7 +80,7 @@ namespace DatabaseProject.Controllers
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
             {
-                SqlCommand cmd = new SqlCommand("Select * from Student", con);
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdminListStudents", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 List<Student> lstStudent = new List<Student>();
                 using (cmd)
@@ -76,12 +96,21 @@ namespace DatabaseProject.Controllers
                         while (rdr.Read())
                         {
                             Student student = new Student();
-                            student.student_id = rdr.GetInt32("advisor_id");
-                            student.f_name = rdr.GetString("f_name");
-                            student.l_name = rdr.GetString("l_name");
-                            student.advisor_id = rdr.GetInt32("advisor_id");
-                            student.advisor_name = rdr.GetSingle("advisor_name");// mehtaga tet8ayar
-                            lstStudent.add(student);
+                            student.student_id = Convert.ToInt32(rdr["student_id"]);
+                            student.f_name = rdr["f_name"].ToString();
+                            student.l_name = rdr["l_name"].ToString();
+                            student.password = rdr["password"].ToString();
+                            student.gpa = Convert.ToDecimal(rdr["gpa"]);
+                            student.faculty = rdr["faculty"].ToString();
+                            student.email = rdr["email"].ToString();
+                            student.major = rdr["major"].ToString();
+                            student.financial_status = Convert.ToBoolean(rdr["financial_status"]);
+                            student.semester = Convert.ToInt16(rdr["semester"]);
+                            student.acquired_hours = Convert.ToInt16(rdr["acquired_hours"]);
+                            student.assigned_hours = Convert.ToInt16(rdr["assigned_hours"]);
+                            student.advisor = new Advisor();
+                            student.advisor.advisor_id = Convert.ToInt16(rdr["advisor_id"]); 
+                            lstStudent.Add(student);
                         }
                     }
                     con.Close();
@@ -89,6 +118,7 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
+        /*
         private List<Request> listAllPendingRequests()
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -119,6 +149,7 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
+        */
         private void AddSemester(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -131,8 +162,8 @@ namespace DatabaseProject.Controllers
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     //set up the parameters
-                    cmd.Parameters.Add("@start_date", SqlDbType.date);
-                    cmd.Parameters.Add("@end_date", SqlDbType.date);
+                    cmd.Parameters.Add("@start_date", SqlDbType.Date);
+                    cmd.Parameters.Add("@end_date", SqlDbType.Date);
                     cmd.Parameters.Add("@semester_code", SqlDbType.VarChar, 40);
                     //state ouput variable
                     cmd.Parameters.Add("@semester_code", SqlDbType.Int).Direction = ParameterDirection.Output;
@@ -227,7 +258,7 @@ namespace DatabaseProject.Controllers
 
 
         }
-        private void AdminLinkStudentToAdvisor()
+        private void AdminLinkStudentToAdvisor(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -317,7 +348,6 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
-        */
     }  
 }
 

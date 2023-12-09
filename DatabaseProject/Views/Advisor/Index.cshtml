@@ -9,16 +9,10 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.student_id)
+            Student ID
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.f_name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.l_name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.password)
+            Name
         </th>
         <th>
             @Html.DisplayNameFor(model => model.gpa)
@@ -27,13 +21,7 @@
             @Html.DisplayNameFor(model => model.faculty)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.email)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.major)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.financial_status)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.semester)
@@ -54,13 +42,7 @@
                 @Html.DisplayFor(modelItem => item.student_id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.f_name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.l_name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.password)
+                @Html.DisplayFor(modelItem => item.f_name) @Html.DisplayFor(modelItem => item.l_name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.gpa)
@@ -69,16 +51,10 @@
                 @Html.DisplayFor(modelItem => item.faculty)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.email)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.major)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.financial_status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.semester)
+                Semester
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.acquired_hours)
@@ -86,11 +62,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.assigned_hours)
             </td>
+            @if (item.acquired_hours >= 157)
+            {
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @Html.ActionLink("GradPlan", "GradPlan", new { student_id = item.student_id }, new { @class = "btn btn-outline-primary" })
             </td>
+            }
         </tr>
     }
 
