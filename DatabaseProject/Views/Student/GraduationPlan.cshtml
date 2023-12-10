@@ -13,7 +13,6 @@
 </p>
 <table class="table">
     <tr>
-        <!--display column header as follow: semeseter code, credit hours-->
         <th>
             Semester Code
         </th>
@@ -25,24 +24,18 @@
     @foreach (var item in Model.semesters)
     {
         <tr>
-            <!--loop over the courses and display them-->
+            <td>
+                @Html.DisplayFor(modelItem => item.semester_code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.credit_hours)
+            </td>
             @foreach (var course in item.courses)
             {
-                <td>
-                    @Html.DisplayFor(modelItem => item.semester_code)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.credit_hours)
-                </td>
                 <td>
                     @Html.DisplayFor(modelItem => course.name)
                 </td>
             }
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
         </tr>
     }
 
