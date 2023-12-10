@@ -165,6 +165,7 @@
     <Compile Include="Models\Course.cs" />
     <Compile Include="Models\GraduationPlan.cs" />
     <Compile Include="Models\GradutaionPlanSemester.cs" />
+    <Compile Include="Models\Installment.cs" />
     <Compile Include="Models\MakeUp_Exam.cs" />
     <Compile Include="Models\Student.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -266,6 +267,7 @@
     <Content Include="Views\Advisor\GradPlan.cshtml" />
     <Content Include="Views\Advisor\InsertGradPlan.cshtml" />
     <Content Include="Views\Advisor\AssignedStudentsCourses.cshtml" />
+    <Content Include="Views\Student\UpcomingInstallments.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
