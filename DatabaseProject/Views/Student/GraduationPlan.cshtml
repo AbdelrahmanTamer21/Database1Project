@@ -25,15 +25,15 @@
     @foreach (var item in Model.semesters)
     {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.semester_code)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.credit_hours)
-            </td>
             <!--loop over the courses and display them-->
             @foreach (var course in item.courses)
             {
+                <td>
+                    @Html.DisplayFor(modelItem => item.semester_code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.credit_hours)
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => course.name)
                 </td>

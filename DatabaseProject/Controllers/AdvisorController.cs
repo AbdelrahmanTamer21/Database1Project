@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Helpers;
@@ -41,12 +42,18 @@ namespace DatabaseProject.Controllers
 
         public ActionResult GradPlan(int student_id)
         {
-            return View();
+            return View(getStudentGraduationPlan(student_id));
         }
 
         public ActionResult InsertGradPlan(int student_id)
         {
             return View();
+        }
+
+        public ActionResult AssignedStudentsCourses()
+        {
+            ViewBag.Majors = new SelectList(getMajors(),"Value","Text");
+            return View(getAssignedStudents("CS"));
         }
 
         public int registerAdvisor(FormCollection form) {
@@ -168,9 +175,83 @@ namespace DatabaseProject.Controllers
                     return lstStudent;
                 }
             }
-    }
+        }
 
-        public ActionResult insertGradPlan(int student_id,FormCollection form)
+        public GraduationPlan getStudentGraduationPlan(int student_id)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM dbo.FN_StudentViewGP(@student_id)", con);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.AddWithValue("@student_id", student_id);
+
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+
+                GraduationPlan graduationPlan = new GraduationPlan();
+
+                if (rdr.HasRows)
+                {
+                    rdr.Read();
+                    graduationPlan.plan_id = Convert.ToInt16(rdr["plan_id"]);
+                    graduationPlan.expected_grad_date = rdr["expected_grad_date"].ToString();
+                    graduationPlan.student = new Student();
+                    graduationPlan.student.student_id = Convert.ToInt32(rdr["student_id"]);
+                    graduationPlan.student.f_name = rdr["Student_name"].ToString().Split(' ')[0];
+                    graduationPlan.student.l_name = rdr["Student_name"].ToString().Split(' ')[1];
+
+                    // Semester
+                    GraduationPlanSemester semester = new GraduationPlanSemester();
+
+                    graduationPlan.semesters = new List<GraduationPlanSemester>();
+                    semester.semester_code = rdr["semester_code"].ToString();
+                    semester.credit_hours = Convert.ToInt32(rdr["semester_credit_hours"]);
+                    semester.advisor = new Advisor();
+                    semester.advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
+                    semester.courses = new List<Course>();
+                    semester.courses.Add(new Course(Convert.ToInt32(rdr["course_id"]), rdr["name"].ToString()));
+
+                    graduationPlan.semesters.Add(semester);
+
+                }
+                else
+                {
+                    rdr.Close();
+                    con.Close();
+                    graduationPlan.semesters = new List<GraduationPlanSemester>();
+                    return graduationPlan;
+                }
+
+                while (rdr.Read())
+                {
+                    // Semester
+                    if (rdr["semester_code"].ToString() != graduationPlan.semesters[graduationPlan.semesters.Count - 1].semester_code)
+                    {
+                        GraduationPlanSemester semester = new GraduationPlanSemester();
+                        semester.semester_code = rdr["semester_code"].ToString();
+                        semester.credit_hours = Convert.ToInt32(rdr["semester_credit_hours"]);
+                        semester.advisor = new Advisor();
+                        semester.advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
+                        semester.courses = new List<Course>();
+                        semester.courses.Add(new Course(Convert.ToInt32(rdr["course_id"]), rdr["name"].ToString()));
+                        graduationPlan.semesters.Add(semester);
+                    }
+                    else
+                    {
+                        graduationPlan.semesters[graduationPlan.semesters.Count - 1].courses.Add(new Course(Convert.ToInt32(rdr["course_id"]), rdr["name"].ToString()));
+                    }
+                }
+                rdr.Close();
+                con.Close();
+
+                return graduationPlan;
+            }
+        }
+
+        public ActionResult insertGradPlanSql (int student_id,FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -195,6 +276,101 @@ namespace DatabaseProject.Controllers
                 }
             }
             return RedirectToAction("GradPlan", new { student_id = student_id});
+        }
+
+        private List<SelectListItem> getMajors()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT DISTINCT major FROM Student", con);
+                cmd.CommandType = CommandType.Text;
+                List<SelectListItem> list = new List<SelectListItem>();
+                using (cmd)
+                {
+                    //open connection and execute query
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        list.Add(new SelectListItem
+                        {
+                            Text = rdr["major"].ToString(),
+                            Value = rdr["major"].ToString(),
+                            Selected = false
+                        });
+                    }
+                    con.Close();
+                }
+                return list;
+            }
+        }
+
+        public List<Student> getAssignedStudents(string major)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorViewAssignedStudents", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                List<Student> lstStudent = new List<Student>();
+                using (cmd)
+                {
+                    if (Session["userID"] == null)
+                    {
+                        return lstStudent;
+                    }
+                    //set up parameteres
+                    cmd.Parameters.AddWithValue("@AdvisorID", Session["userID"]);
+                    cmd.Parameters.AddWithValue("@major", major);
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        Student student = new Student();
+                        student.courses = new List<Course>();
+                        if (rdr.Read())
+                        {
+                            student.student_id = Convert.ToInt32(rdr["student_id"]);
+                            student.f_name = rdr["Student_name"].ToString().Split(' ')[0];
+                            student.l_name = rdr["Student_name"].ToString().Split(' ')[1];
+                            student.major = rdr["major"].ToString();
+                            Course course = new Course();
+                            course.name = rdr["Course_name"].ToString();
+                            student.courses.Add(course);
+                        }
+                        while (rdr.Read())
+                        {
+                            if (Convert.ToInt32(rdr["student_id"]) == student.student_id)
+                            {
+                                Course course = new Course();
+                                course.name = rdr["Course_name"].ToString();
+                                student.courses.Add(course);
+                            }
+                            else
+                            {
+                                lstStudent.Add(student);
+                                student = new Student();
+                                student.courses = new List<Course>();
+                                student.student_id = Convert.ToInt32(rdr["student_id"]);
+                                student.f_name = rdr["Student_name"].ToString().Split(' ')[0];
+                                student.l_name = rdr["Student_name"].ToString().Split(' ')[1];
+                                student.major = rdr["major"].ToString();
+                                Course course = new Course();
+                                course.name = rdr["Course_name"].ToString();
+                                student.courses.Add(course);
+                            }
+                        }
+                        lstStudent.Add(student);
+                    }
+                    con.Close();
+                    return lstStudent;
+                }
+            }
         }
     }
 }

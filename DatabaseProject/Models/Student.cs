@@ -22,6 +22,7 @@ namespace DatabaseProject.Models
         public int acquired_hours { get; set; }
         public int assigned_hours { get; set; }
         public Advisor advisor { get; set; }
+        public List<Course> courses { get; set; }
 
         public Student(int student_id, string f_name, string l_name, string password, decimal gpa, string faculty, string email, string major, bool financial_status, int semester, int acquired_hours, int assigned_hours, Advisor advisor)
         {

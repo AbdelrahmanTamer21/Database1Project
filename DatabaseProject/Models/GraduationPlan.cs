@@ -4,6 +4,7 @@ namespace DatabaseProject.Models
 {
     public class GraduationPlan
     {
+        public int plan_id { get; set; }
         public string expected_grad_date { get; set; }
         public Student student { get; set; }
 

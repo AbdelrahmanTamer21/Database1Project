@@ -263,6 +263,9 @@
     <Content Include="Views\Advisor\Login.cshtml" />
     <Content Include="Views\Home\Student.cshtml" />
     <Content Include="Views\Admin\Login.cshtml" />
+    <Content Include="Views\Advisor\GradPlan.cshtml" />
+    <Content Include="Views\Advisor\InsertGradPlan.cshtml" />
+    <Content Include="Views\Advisor\AssignedStudentsCourses.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
