@@ -1,0 +1,38 @@
+﻿@model IEnumerable<DatabaseProject.Models.Course_Slot_Instructor>
+
+@{
+    ViewBag.Title = "AllCoursesSlots";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>AllCoursesSlots</h2>
+
+<table class="table">
+    <tr>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        @foreach (var prop in item.course.GetType().GetProperties())
+        {
+            <td>
+                @Html.DisplayFor(modelItem => prop.GetValue(item, null))
+            </td>
+        }
+        @foreach (var prop in item.slot.GetType().GetProperties())
+        {
+            <td>
+                @Html.DisplayFor(modelItem => prop.GetValue(item, null))
+            </td>
+        }
+        @foreach (var prop in item.instructor.GetType().GetProperties())
+        {
+            <td>
+                @Html.DisplayFor(modelItem => prop.GetValue(item, null))
+            </td>
+        }
+    </tr>
+}
+
+</table>

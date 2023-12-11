@@ -1,0 +1,39 @@
+﻿@model IEnumerable<DatabaseProject.Models.MakeUp_Exam>
+
+@{
+    ViewBag.Title = "AllCoursesExams";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>AllCoursesExams</h2>
+
+<table class="table">
+    <tr>
+        <th>Exam id</th>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Course Name</th>
+        <th>Semester</th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.exam_id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.type)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.course.name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.course.semester)
+        </td>
+    </tr>
+}
+
+</table>

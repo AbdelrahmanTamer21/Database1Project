@@ -1019,7 +1019,7 @@ CREATE FUNCTION [FN_StudentViewSlot]
 
 Go
 Create PROC [Procedures_StudentRegisterFirstMakeup]
-@StudentID int, @courseID int, @studentCurr_sem varchar(40)
+@StudentID int, @courseID int, @studentCurr_sem varchar(40), @result bit output
 AS
 declare 
 @exam_id int,
@@ -1029,19 +1029,24 @@ declare
 If(not exists( Select * from Student_Instructor_Course_take where Student_Instructor_Course_take.student_id = @StudentID and Student_Instructor_Course_take.course_id
 = @courseID and Student_Instructor_Course_take.exam_type in ('First_makeup','Second_makeup')))
 begin 
-If(exists(Select * from Student_Instructor_Course_take where Student_Instructor_Course_take.student_id = @StudentID and Student_Instructor_Course_take.course_id
-= @courseID  and Student_Instructor_Course_take.exam_type = 'Normal' and Student_Instructor_Course_take.grade in ('F','FF',null)))
-begin 
-Select @exam_id = MakeUp_Exam.exam_id from MakeUp_Exam where MakeUp_Exam.course_id = @courseID
-Select @instructor_id = Student_Instructor_Course_take.instructor_id from Student_Instructor_Course_take 
-where Student_Instructor_Course_take.student_id = @StudentID and Student_Instructor_Course_take.course_id = @courseID 
-insert into Exam_Student values (@exam_id, @StudentID, @courseID)
-Update Student_Instructor_Course_take 
-Set exam_type = 'first_makeup' , grade= null
-where  student_id = @StudentID and course_id = @courseID and
- semester_code = @studentCurr_sem
+    If(exists(Select * from Student_Instructor_Course_take where Student_Instructor_Course_take.student_id = @StudentID and Student_Instructor_Course_take.course_id
+    = @courseID  and Student_Instructor_Course_take.exam_type = 'Normal' and Student_Instructor_Course_take.grade in ('F','FF',null)))
+    begin 
+        Select @exam_id = MakeUp_Exam.exam_id from MakeUp_Exam where MakeUp_Exam.course_id = @courseID
+        Select @instructor_id = Student_Instructor_Course_take.instructor_id from Student_Instructor_Course_take 
+        where Student_Instructor_Course_take.student_id = @StudentID and Student_Instructor_Course_take.course_id = @courseID 
+        insert into Exam_Student values (@exam_id, @StudentID, @courseID)
+        Update Student_Instructor_Course_take 
+        Set exam_type = 'first_makeup' , grade= null
+        where  student_id = @StudentID and course_id = @courseID and
+            semester_code = @studentCurr_sem
+        set @result = 1
+    end
+    else
+        set @result = 0
 end
-end
+else
+    set @result = 0
 Go
 ---------------------------------------------------------------------------------
 -----------------Second makeup Eligibility Check {refer to eligibility section (2.4.1) in the description}
