@@ -197,6 +197,36 @@ namespace DatabaseProject.Controllers
             }
 
         }
+        public ActionResult missingCource(FormCollection form)
+        {
+
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM dbo.Procedures_ViewRequiredCourses", con);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.Add("@StudentID", SqlDbType.Int);
+                cmd.Parameters["@StudentID"].Value = form["StudentID"];
+
+                List<Course> courses = new List<Course>();
+
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    courses.Add(
+                        new Course(Convert.ToInt32(rdr["course_id"]), rdr["name"].ToString()
+                            ));
+                }
+                rdr.Close();
+                con.Close();
+
+                return View(courses);
+            }
+
+        }
 
         ///////////// PART 2 /////////////
 
