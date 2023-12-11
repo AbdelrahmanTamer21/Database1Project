@@ -7,13 +7,16 @@
 <h2>GradPlan</h2>
 
 <div class="mt-2">
-    @Html.ActionLink("Create New GradPlan", "Create", new { student_id = Request.QueryString["student_id"] }, new { @class = "btn btn-primary" })
-    @Html.ActionLink("Add Course", "InsertGradPlan", new { student_id = Request.QueryString["student_id"] }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Create New GradPlan", "InsertGradPlan", new { student_id = Request.QueryString["student_id"] }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Add Course", "InsertCourseGradPlan", new { student_id = Request.QueryString["student_id"] }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Update Grad Date", "UpdateGradPlan", new { student_id = Request.QueryString["student_id"] }, new { @class = "btn btn-primary" })
 </div>
 <div class="card mt-3">
     <div class="card-body">
         <p class="m-0">
             PlanId: @Html.DisplayFor(model => model.plan_id)
+            <br />
+            Expected graduation date: @Html.DisplayFor(model => model.expected_grad_date)
             <br />
             StudentId: @Request.QueryString["student_id"]
             </p>
@@ -46,11 +49,6 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => course.name)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
                 </td>
             </tr>
         }

@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "InsertCourseGradPlan";
+}
+
+<h2>Insert Grad Plan Course</h2>
+
+@using (Html.BeginForm("insertCourseGradPlanSql", "Advisor", new { student_id = Request.QueryString["student_id"] }, FormMethod.Post, null))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Course</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group row mt-3">
+            <div class="col-3">
+                <label class="control-label" for="Semester_code">Semester code</label>
+            </div>
+            <div class="col-md-8">
+                @Html.DropDownList("semester_code", ViewBag.Semesters as SelectList, new { @class = "form-select" })
+            </div>
+        </div>
+
+        <div class="form-group row mt-3">
+            <div class="col-3">
+                <label class="control-label" for="Course_name">Course</label>
+            </div>
+            <div class="col-md-8">
+                @Html.DropDownList("course_name", ViewBag.Courses as SelectList, new { @class = "form-select" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Add" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}

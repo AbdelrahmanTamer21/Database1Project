@@ -1,0 +1,34 @@
+﻿@model DatabaseProject.Models.GraduationPlan
+
+@{
+    ViewBag.Title = "UpdateGradPlan";
+}
+
+<h2>UpdateGradPlan</h2>
+
+@using (Html.BeginForm("updateGradDateSql","Advisor",new {student_id = Request.QueryString["student_id"] },FormMethod.Post,null))
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>GraduationPlan</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group col mt-3">
+        <div class="row">
+            <label class="control-label" for="expected_grad_date">Expected graduation date</label>
+        </div>
+        <div class="w-25 mt-3">
+            @Html.EditorFor(model => model.expected_grad_date, new { htmlAttributes = new { @class = "form-control" ,@type = "date" } })
+            @Html.ValidationMessageFor(model => model.expected_grad_date, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+        <div class="form-group mt-4">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Update" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+

@@ -45,8 +45,20 @@ namespace DatabaseProject.Controllers
             return View(getStudentGraduationPlan(student_id));
         }
 
+        public ActionResult UpdateGradPlan(int student_id) 
+        {
+            return View();
+        }
+
         public ActionResult InsertGradPlan(int student_id)
         {
+            ViewBag.Semesters = new SelectList(getSemesters(),"Value","Text");
+            return View();
+        }
+        public ActionResult InsertCourseGradPlan(int student_id)
+        {
+            ViewBag.Semesters = new SelectList(getSemesters(), "Value", "Text");
+            ViewBag.Courses = new SelectList(getCoureNames(), "Value", "Text");
             return View();
         }
 
@@ -55,34 +67,51 @@ namespace DatabaseProject.Controllers
             ViewBag.Majors = new SelectList(getMajors(),"Value","Text");
             return View(getAssignedStudents("CS"));
         }
+        public ActionResult PendingRequests()
+        {
+            List<Request> requests = getPendingRequests(Convert.ToInt16(Session["userID"]));
+            return View(requests);
+        }
 
-        public int registerAdvisor(FormCollection form) {
-            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
-            using (con)
+        public ActionResult AllRequests()
+        {
+            return View(getAllRequests());
+        }
+
+        public ActionResult registerAdvisor(FormCollection form) {
+            try
             {
-                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorRegistration", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-                using (cmd)
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+                using (con)
                 {
+                    SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorRegistration", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    using (cmd)
+                    {
 
-                    //set up the parameters
-                    cmd.Parameters.AddWithValue("@advisor_name", form["name"]);
-                    cmd.Parameters.AddWithValue("@password", form["password"]);
-                    cmd.Parameters.AddWithValue("@email", form["email"]);
-                    cmd.Parameters.AddWithValue("@office", form["office"]);
-                    //state ouput variable
-                    cmd.Parameters.Add("@Advisor_id", SqlDbType.Int).Direction = ParameterDirection.Output;
+                        //set up the parameters
+                        cmd.Parameters.AddWithValue("@advisor_name", form["name"]);
+                        cmd.Parameters.AddWithValue("@password", form["password"]);
+                        cmd.Parameters.AddWithValue("@email", form["email"]);
+                        cmd.Parameters.AddWithValue("@office", form["office"]);
+                        //state ouput variable
+                        cmd.Parameters.Add("@Advisor_id", SqlDbType.Int).Direction = ParameterDirection.Output;
 
-                    //open connection and execute stored procedure
-                    con.Open();
-                    cmd.ExecuteNonQuery();
+                        //open connection and execute stored procedure
+                        con.Open();
+                        cmd.ExecuteNonQuery();
 
-                    //get the output variable
-                    int id = Convert.ToInt32(cmd.Parameters["@Advisor_id"].Value);
-
-                    con.Close();
-                    return id;
+                        //get the output variable
+                        int id = Convert.ToInt32(cmd.Parameters["@Advisor_id"].Value);
+                        TempData["Alert"] = "New Student ID: " + id;
+                        con.Close();
+                        return RedirectToAction("Index");
+                    }
                 }
+            }catch(Exception ex)
+            {
+                TempData["Alert"] = ex.Message;
+                return RedirectToAction("Register");
             }
         }
 
@@ -95,6 +124,14 @@ namespace DatabaseProject.Controllers
                 cmd.CommandType = CommandType.Text;
                 using (cmd)
                 {
+                    try
+                    {
+                        int id = Convert.ToInt16(form["advisor_id"]);
+                    }catch(Exception ex)
+                    {
+                        TempData["LoginError"] = "ID or Password are wrong";
+                        return RedirectToAction("Login");
+                    }
                     //set up the parameters
                     cmd.Parameters.AddWithValue("@advisor_Id", form["advisor_id"]);
                     cmd.Parameters.AddWithValue("@password", form["password"]);
@@ -250,23 +287,19 @@ namespace DatabaseProject.Controllers
                 return graduationPlan;
             }
         }
-
-        public ActionResult insertGradPlanSql (int student_id,FormCollection form)
+        public ActionResult updateGradDateSql(FormCollection form,int student_id)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
             {
-                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorCreateGP", con);
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorUpdateGP", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 using (cmd)
                 {
 
                     //set up the parameters
-                    cmd.Parameters.AddWithValue("@Semester_code", form["Semester_code"]);
-                    cmd.Parameters.AddWithValue("@expected_graduation_date", form["expected_graduation_date"]);
-                    cmd.Parameters.AddWithValue("@sem_credit_hours", form["credit_hours"]);
-                    cmd.Parameters.AddWithValue("@advisor_id", Session["userID"]);
-                    cmd.Parameters.AddWithValue("@student_id", student_id);
+                    cmd.Parameters.AddWithValue("@expected_grad_date", form["expected_grad_date"]);
+                    cmd.Parameters.AddWithValue("@StudentID", student_id);
 
                     //open connection and execute stored procedure
                     con.Open();
@@ -275,7 +308,104 @@ namespace DatabaseProject.Controllers
                     con.Close();
                 }
             }
-            return RedirectToAction("GradPlan", new { student_id = student_id});
+            return RedirectToAction("GradPlan", new { student_id = student_id });
+        }
+
+        public ActionResult insertGradPlanSql (int student_id,FormCollection form)
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+                using (con)
+                {
+                    SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorCreateGP", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    using (cmd)
+                    {
+
+                        //set up the parameters
+                        cmd.Parameters.AddWithValue("@Semester_code", form["semester_code"]);
+                        cmd.Parameters.AddWithValue("@expected_graduation_date", form["expected_grad_date"]);
+                        cmd.Parameters.AddWithValue("@sem_credit_hours", form["credit_hours"]);
+                        cmd.Parameters.AddWithValue("@advisor_id", Session["userID"]);
+                        cmd.Parameters.AddWithValue("@student_id", student_id);
+
+                        //open connection and execute stored procedure
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+
+                        con.Close();
+                    }
+                }
+                return RedirectToAction("GradPlan", new { student_id = student_id });
+            }
+            catch(Exception ex)
+            {
+                TempData["Alert"] = ex.Message;
+                return RedirectToAction("InsertGradPlan", new { student_id = student_id });
+            }
+        }
+
+        public ActionResult insertCourseGradPlanSql(int student_id, FormCollection form)
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+                using (con)
+                {
+                    SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorAddCourseGP", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    using (cmd)
+                    {
+
+                        //set up the parameters
+                        cmd.Parameters.AddWithValue("@student_id", student_id);
+                        cmd.Parameters.AddWithValue("@Semester_code", form["semester_code"]);
+                        cmd.Parameters.AddWithValue("@course_name", form["course_name"]);
+
+                        //open connection and execute stored procedure
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+
+                        con.Close();
+                    }
+                }
+                return RedirectToAction("GradPlan", new { student_id = student_id });
+            }
+            catch (Exception ex)
+            {
+                TempData["Alert"] = ex.Message;
+                return RedirectToAction("InsertGradPlan", new { student_id = student_id });
+            }
+        }
+
+        private List<SelectListItem> getSemesters()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT semester_code FROM Semester", con);
+                cmd.CommandType = CommandType.Text;
+                List<SelectListItem> list = new List<SelectListItem>();
+                using (cmd)
+                {
+                    //open connection and execute query
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        list.Add(new SelectListItem
+                        {
+                            Text = rdr["semester_code"].ToString(),
+                            Value = rdr["semester_code"].ToString(),
+                            Selected = false
+                        });
+                    }
+                    con.Close();
+                }
+                return list;
+            }
         }
 
         private List<SelectListItem> getMajors()
@@ -298,6 +428,35 @@ namespace DatabaseProject.Controllers
                         {
                             Text = rdr["major"].ToString(),
                             Value = rdr["major"].ToString(),
+                            Selected = false
+                        });
+                    }
+                    con.Close();
+                }
+                return list;
+            }
+        }
+
+        private List<SelectListItem> getCoureNames()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT DISTINCT name FROM Course", con);
+                cmd.CommandType = CommandType.Text;
+                List<SelectListItem> list = new List<SelectListItem>();
+                using (cmd)
+                {
+                    //open connection and execute query
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        list.Add(new SelectListItem
+                        {
+                            Text = rdr["name"].ToString(),
+                            Value = rdr["name"].ToString(),
                             Selected = false
                         });
                     }
@@ -369,6 +528,172 @@ namespace DatabaseProject.Controllers
                     }
                     con.Close();
                     return lstStudent;
+                }
+            }
+        }
+
+        public List<Request> getPendingRequests(int advisor_id)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorViewPendingRequests", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                List<Request> lstRequest = new List<Request>();
+                using (cmd)
+                {
+                    //set up parameteres
+                    cmd.Parameters.AddWithValue("@Advisor_ID", advisor_id);
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while(rdr.Read())
+                        {
+                            Request request = new Request();
+                            request.request_id = Convert.ToInt16(rdr["request_id"]);
+                            request.type = rdr["type"].ToString();
+                            request.comment = rdr["comment"].ToString();
+                            request.status = rdr["status"].ToString();
+                            switch (request.type)
+                            {
+                                case "credit_hours": 
+                                    request.credit_hours = Convert.ToInt16(rdr["credit_hours"]); 
+                                    break;
+                                case "course":
+                                    request.course = new Course();
+                                    request.course.course_id = Convert.ToInt16(rdr["course_id"]);
+                                    break;
+                            }
+                            request.student = new Student();
+                            request.student.student_id = Convert.ToInt16(rdr["student_id"]);
+                            request.advisor = new Advisor();
+                            request.advisor.advisor_id = Convert.ToInt16(rdr["advisor_id"]);
+                            lstRequest.Add(request);
+                        }
+                    }
+                    con.Close();
+                    return lstRequest;
+                }
+            }
+        }
+
+        public List<Request> getAllRequests()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Request", con);
+                cmd.CommandType = CommandType.Text;
+                List<Request> lstRequest = new List<Request>();
+                using (cmd)
+                {
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            Request request = new Request();
+                            request.request_id = Convert.ToInt16(rdr["request_id"]);
+                            request.type = rdr["type"].ToString();
+                            request.comment = rdr["comment"].ToString();
+                            request.status = rdr["status"].ToString();
+                            switch (request.type)
+                            {
+                                case "credit_hours":
+                                    request.credit_hours = Convert.ToInt16(rdr["credit_hours"]);
+                                    break;
+                                case "course":
+                                    request.course = new Course();
+                                    request.course.course_id = Convert.ToInt16(rdr["course_id"]);
+                                    break;
+                            }
+                            request.student = new Student();
+                            request.student.student_id = Convert.ToInt16(rdr["student_id"]);
+                            request.advisor = new Advisor();
+                            request.advisor.advisor_id = Convert.ToInt16(rdr["advisor_id"]);
+                            lstRequest.Add(request);
+                        }
+                    }
+                    con.Close();
+                    return lstRequest;
+                }
+            }
+        }
+
+        public string getCurrentSem()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT semester_code FROM Semester WHERE start_date <= GETDATE() AND end_date >= GETDATE()", con);
+                cmd.CommandType = CommandType.Text;
+                using (cmd)
+                {
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    using(SqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while(rdr.Read()) { 
+                            return rdr["semester_code"].ToString();
+                        }
+                    }
+
+                    con.Close();
+                }
+            }
+            return "";
+        }
+
+        public ActionResult ApproveRejectCreditHours(int request_id)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorApproveRejectCHRequest", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                using (cmd)
+                {
+                    //set up parameteres
+                    cmd.Parameters.AddWithValue("@requestID", request_id);
+                    cmd.Parameters.AddWithValue("@current_sem_code", getCurrentSem());
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    con.Close();
+                    return RedirectToAction("PendingRequests");
+                }
+            }
+        }
+
+        public ActionResult ApproveRejectCourse(int request_id)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorApproveRejectCourseRequest", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                using (cmd)
+                {
+                    //set up parameteres
+                    cmd.Parameters.AddWithValue("@requestID", request_id);
+                    cmd.Parameters.AddWithValue("@current_semester_code", getCurrentSem());
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    con.Close();
+                    return RedirectToAction("PendingRequests");
                 }
             }
         }

@@ -1,0 +1,85 @@
+﻿@model IEnumerable<DatabaseProject.Models.Request>
+
+@{
+    ViewBag.Title = "PendingRequests";
+}
+
+<h2>All Pending Requests</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            Request ID
+        </th>
+        <th>
+            Type
+        </th>
+        <th>
+            Comment
+        </th>
+        <th>
+            Status
+        </th>
+        <th>
+            Credit Hours/Course ID
+        </th>
+        <th>
+            Student ID
+        </th>
+        <th>
+            Advisor ID
+        </th>
+        <th>
+            Approve/Rejcet Request
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.request_id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.comment)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.status)
+            </td>
+            @if (item.type == "credit_hours")
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.credit_hours)
+                </td>
+            }
+            @if (item.type == "course")
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.course.course_id)
+                </td>
+            }
+            <td>
+                @Html.DisplayFor(modelItem => item.student.student_id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.advisor.advisor_id)
+            </td>
+            @if (item.type == "credit_hours")
+            {
+                <td>
+                    @Html.ActionLink("Approve/Reject", "ApproveRejectCreditHours", new { request_id = item.request_id },new {@class="btn btn-primary"})
+                </td>
+            }
+            @if (item.type == "course")
+            {
+                <td>
+                    @Html.ActionLink("Approve/Reject", "ApproveRejectCourse", new { request_id = item.request_id }, new { @class = "btn btn-primary" })
+                </td>
+            }
+        </tr>
+    }
+
+</table>
