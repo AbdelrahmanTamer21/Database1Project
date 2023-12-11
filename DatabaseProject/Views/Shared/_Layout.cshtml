@@ -18,14 +18,19 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">@Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link active" })</li>
                     <li class="nav-item">@Html.ActionLink("Dashboard", "Index", null, new { @class = "nav-link active" })</li>
+                    @if (HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString() == "Advisor")
+                    {
+                        <li class="nav-item">@Html.ActionLink("PendingRequests", "PendingRequests", null, new { @class = "nav-link active" })</li>
+                        <li class="nav-item">@Html.ActionLink("AllRequests", "AllRequests", null, new { @class = "nav-link active" })</li>
+                    }
                 </ul>
                 @if (HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString() != "Home")
                 {
-                <div>
-                    @if (HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString() != "Admin")
-                    {
-                        @Html.ActionLink("Register", "Register", null, new { @class = "btn btn-dark btn-outline-light" })
-                    }
+                    <div>
+                        @if (HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString() != "Admin")
+                        {
+                            @Html.ActionLink("Register", "Register", null, new { @class = "btn btn-dark btn-outline-light" })
+                        }
                         @Html.ActionLink("Login", "Login", null, new { @class = "btn btn-dark btn-outline-light" })
                     </div>
                 }
@@ -39,7 +44,10 @@
             <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
         </footer>
     </div>
-
+    @if (TempData["Alert"] != null)
+    {
+        <script language='javascript' type='text/javascript'>alert("@TempData["Alert"]");</script>
+    }
     @Scripts.Render("~/bundles/scripts")
     @RenderSection("scripts", required: false)
 </body>
