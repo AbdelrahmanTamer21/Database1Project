@@ -31,7 +31,8 @@ namespace DatabaseProject.Controllers
         {
             return View();
         }
-
+        ///////////// PART 1 /////////////
+        /// A
         public int registerStudent(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -75,6 +76,7 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
+        /// C
         public void addStudentPhone(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -104,7 +106,8 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
-        public ActionResult optionalCourse()
+        /// D
+        public ActionResult optionalCourses()
         {
 
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -135,6 +138,7 @@ namespace DatabaseProject.Controllers
             }
 
         }
+        /// E
         public ActionResult availableCourses(FormCollection form)
         {
 
@@ -167,6 +171,7 @@ namespace DatabaseProject.Controllers
             }
 
         }
+        /// F
         public ActionResult requiredCourses(FormCollection form)
         {
 
@@ -197,7 +202,8 @@ namespace DatabaseProject.Controllers
             }
 
         }
-        public ActionResult missingCource(FormCollection form)
+        /// G
+        public ActionResult missingCources(FormCollection form)
         {
 
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -227,6 +233,7 @@ namespace DatabaseProject.Controllers
             }
 
         }
+        /// H
         public void sendCourceRequest(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -248,6 +255,40 @@ namespace DatabaseProject.Controllers
                     //set parameter values
                     cmd.Parameters["@courseID"].Value = form["course_id"];
                     cmd.Parameters["@StudentID"].Value = form["student_id"];
+                    cmd.Parameters["@type"].Value = form["type"];
+                    cmd.Parameters["@comment"].Value = form["comment"];
+
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    con.Close();
+                }
+            }
+        }
+        /// I
+        public void sendCreditHourRequest(FormCollection form)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_StudentSendingCHRequest", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                using (cmd)
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    //set up the parameters
+                    cmd.Parameters.Add("@StudentID", SqlDbType.VarChar, 40);
+                    cmd.Parameters.Add("@credit_hours", SqlDbType.VarChar, 40);
+                    cmd.Parameters.Add("@type", SqlDbType.VarChar, 40);
+                    cmd.Parameters.Add("@comment", SqlDbType.VarChar, 40);
+
+
+                    //set parameter values
+                    cmd.Parameters["@StudentID"].Value = form["student_id"];
+                    cmd.Parameters["@credit_hours"].Value = form["credit_hours"];
                     cmd.Parameters["@type"].Value = form["type"];
                     cmd.Parameters["@comment"].Value = form["comment"];
 
