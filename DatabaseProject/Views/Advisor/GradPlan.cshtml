@@ -1,0 +1,59 @@
+﻿@model DatabaseProject.Models.GraduationPlan
+
+@{
+    ViewBag.Title = "GradPlan";
+}
+
+<h2>GradPlan</h2>
+
+<div class="mt-2">
+    @Html.ActionLink("Create New GradPlan", "Create", new { student_id = Request.QueryString["student_id"] }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Add Course", "InsertGradPlan", new { student_id = Request.QueryString["student_id"] }, new { @class = "btn btn-primary" })
+</div>
+<div class="card mt-3">
+    <div class="card-body">
+        <p class="m-0">
+            PlanId: @Html.DisplayFor(model => model.plan_id)
+            <br />
+            StudentId: @Request.QueryString["student_id"]
+            </p>
+        </div>
+</div>
+<table class="table">
+    <tr>
+        <th>
+            Semester Code
+        </th>
+        <th>
+            Credit Hours
+        </th>
+        <th>
+            Course Name
+        </th>
+    </tr>
+
+    @foreach (var item in Model.semesters)
+    {
+        <!--loop over the courses and display them-->
+        foreach (var course in item.courses)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.semester_code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.credit_hours)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => course.name)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
+    }
+
+</table>

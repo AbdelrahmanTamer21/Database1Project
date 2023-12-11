@@ -252,7 +252,7 @@ namespace DatabaseProject.Controllers
 
                 if (rdr.HasRows) {
                     rdr.Read();
-                    graduationPlan.plan_id = Convert.ToInt32(rdr["plan_id"]);
+                    graduationPlan.plan_id = Convert.ToInt16(rdr["plan_id"]);
                     graduationPlan.expected_grad_date = rdr["expected_grad_date"].ToString();
                     graduationPlan.student = new Student();
                     graduationPlan.student.student_id = Convert.ToInt32(rdr["student_id"]);
@@ -308,26 +308,36 @@ namespace DatabaseProject.Controllers
 
         // B
         // View the upcoming not paid installment.
-        public ActionResult UpcomingInstallment()
+        public ActionResult UpcomingInstallments()
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
             {
-                SqlCommand cmd = new SqlCommand("dbo.FN_StudentUpcoming_installment", con);
-                cmd.CommandType = CommandType.StoredProcedure;
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Installment INNER JOIN Payment ON Payment.payment_id = Installment.payment_id AND Payment.student_id = @student_ID AND Installment.status='notpaid' WHERE Installment.deadline > CURRENT_TIMESTAMP ORDER BY Installment.deadline ASC", con);
+                cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.Add("@student_id", SqlDbType.Int);
                 cmd.Parameters["@student_id"].Value = 1;
 
-                cmd.Parameters.Add("@installdeadline", SqlDbType.Date).Direction = ParameterDirection.ReturnValue;
+                List<Installment> installments = new List<Installment>();
 
                 con.Open();
-                cmd.ExecuteNonQuery();
+                var rdr = cmd.ExecuteReader();
                 
-                var date = cmd.Parameters["@installdeadline"].Value.ToString();
+                while (rdr.Read())
+                { 
+                    installments.Add(new Installment()
+                    {
+                        payment_id = Convert.ToInt32(rdr["payment_id"]),
+                        startdate = rdr["startdate"].ToString(),
+                        deadline = rdr["deadline"].ToString(),
+                        amount = Convert.ToInt32(rdr["amount"]),
+                        status = rdr["status"].ToString()
+                    });
+                }
 
                 con.Close();
-                return View(date);
+                return View(installments);
             }
         }
 

@@ -11,9 +11,8 @@ namespace DatabaseProject.Models
         public List<GraduationPlanSemester> semesters { get; set; }
 
 
-        public GraduationPlan(int plan_id, string expected_grad_date, Student student, List<GraduationPlanSemester> semesters)
+        public GraduationPlan(string expected_grad_date, Student student, List<GraduationPlanSemester> semesters)
         {
-            this.plan_id = plan_id;
             this.expected_grad_date = expected_grad_date;
             this.student = student;
             this.semesters = semesters;
