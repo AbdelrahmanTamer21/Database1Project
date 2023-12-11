@@ -208,7 +208,7 @@ namespace DatabaseProject.Controllers
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.Add("@StudentID", SqlDbType.Int);
-                cmd.Parameters["@StudentID"].Value = form["StudentID"];
+                cmd.Parameters["@StudentID"].Value = form["student_id"];
 
                 List<Course> courses = new List<Course>();
 
@@ -226,6 +226,39 @@ namespace DatabaseProject.Controllers
                 return View(courses);
             }
 
+        }
+        public void sendCourceRequest(FormCollection form)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_StudentSendingCourseRequest", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                using (cmd)
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    //set up the parameters
+                    cmd.Parameters.Add("@courseID", SqlDbType.VarChar, 40);
+                    cmd.Parameters.Add("@StudentID", SqlDbType.VarChar, 40);
+                    cmd.Parameters.Add("@type", SqlDbType.VarChar, 40);
+                    cmd.Parameters.Add("@comment", SqlDbType.VarChar, 40);
+
+
+                    //set parameter values
+                    cmd.Parameters["@courseID"].Value = form["course_id"];
+                    cmd.Parameters["@StudentID"].Value = form["student_id"];
+                    cmd.Parameters["@type"].Value = form["type"];
+                    cmd.Parameters["@comment"].Value = form["comment"];
+
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    con.Close();
+                }
+            }
         }
 
         ///////////// PART 2 /////////////
