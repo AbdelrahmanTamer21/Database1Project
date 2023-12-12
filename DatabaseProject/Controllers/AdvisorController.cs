@@ -11,6 +11,9 @@ using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Xml.Linq;
+using System.Windows.Forms;
+using FormCollection = System.Web.Mvc.FormCollection;
+using System.Web.UI;
 
 namespace DatabaseProject.Controllers
 {
@@ -103,7 +106,7 @@ namespace DatabaseProject.Controllers
 
                         //get the output variable
                         int id = Convert.ToInt32(cmd.Parameters["@Advisor_id"].Value);
-                        TempData["Alert"] = "New Student ID: " + id;
+                        MessageBox.Show("New Student ID: " + id);
                         con.Close();
                         return RedirectToAction("Index");
                     }
@@ -234,7 +237,7 @@ namespace DatabaseProject.Controllers
                 {
                     rdr.Read();
                     graduationPlan.plan_id = Convert.ToInt16(rdr["plan_id"]);
-                    graduationPlan.expected_grad_date = rdr["expected_grad_date"].ToString();
+                    graduationPlan.expected_grad_date = Convert.ToDateTime(rdr["expected_grad_date"]).ToShortDateString();
                     graduationPlan.student = new Student();
                     graduationPlan.student.student_id = Convert.ToInt32(rdr["student_id"]);
                     graduationPlan.student.f_name = rdr["Student_name"].ToString().Split(' ')[0];
@@ -341,7 +344,7 @@ namespace DatabaseProject.Controllers
             }
             catch(Exception ex)
             {
-                TempData["Alert"] = ex.Message;
+                MessageBox.Show(ex.Message);
                 return RedirectToAction("InsertGradPlan", new { student_id = student_id });
             }
         }
@@ -362,6 +365,39 @@ namespace DatabaseProject.Controllers
                         cmd.Parameters.AddWithValue("@student_id", student_id);
                         cmd.Parameters.AddWithValue("@Semester_code", form["semester_code"]);
                         cmd.Parameters.AddWithValue("@course_name", form["course_name"]);
+
+                        //open connection and execute stored procedure
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+
+                        con.Close();
+                    }
+                }
+                return RedirectToAction("GradPlan", new { student_id = student_id });
+            }
+            catch (Exception ex)
+            {
+                TempData["Alert"] = ex.Message;
+                return RedirectToAction("InsertGradPlan", new { student_id = student_id });
+            }
+        }
+
+        public ActionResult DeleteCourseFromGradPlan(int student_id, string sem_code, int course_id)
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+                using (con)
+                {
+                    SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorDeleteFromGP", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    using (cmd)
+                    {
+
+                        //set up the parameters
+                        cmd.Parameters.AddWithValue("@studentID", student_id);
+                        cmd.Parameters.AddWithValue("@sem_code", sem_code);
+                        cmd.Parameters.AddWithValue("@courseID", course_id);
 
                         //open connection and execute stored procedure
                         con.Open();

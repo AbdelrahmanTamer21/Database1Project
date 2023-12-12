@@ -12,15 +12,22 @@
     @Html.ActionLink("Update Grad Date", "UpdateGradPlan", new { student_id = Request.QueryString["student_id"] }, new { @class = "btn btn-primary" })
 </div>
 <div class="card mt-3">
-    <div class="card-body">
-        <p class="m-0">
-            PlanId: @Html.DisplayFor(model => model.plan_id)
-            <br />
-            Expected graduation date: @Html.DisplayFor(model => model.expected_grad_date)
-            <br />
-            StudentId: @Request.QueryString["student_id"]
+    <div class="card-body row">
+        <div class="col">
+            <p class="m-0">
+                PlanId: @Html.DisplayFor(model => model.plan_id)
+                <br />
+                Expected graduation date: @Html.DisplayFor(model => model.expected_grad_date)
             </p>
         </div>
+        <div class="col">
+            <p class="m-0">
+                StudentId: @Request.QueryString["student_id"]
+                <br />
+                Student Name: @Html.DisplayFor(model => model.student.f_name) @Html.DisplayFor(model => model.student.l_name)
+            </p>
+        </div>
+    </div>
 </div>
 <table class="table">
     <tr>
@@ -33,6 +40,7 @@
         <th>
             Course Name
         </th>
+        <th></th>
     </tr>
 
     @foreach (var item in Model.semesters)
@@ -49,6 +57,9 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => course.name)
+                </td>
+                <td>
+                    @Html.ActionLink("Delete","DeleteCourseFromGradPlan",new { student_id = Request.QueryString["student_id"], sem_code = item.semester_code, course_id = course.course_id},new { @class = "btn btn-danger"})
                 </td>
             </tr>
         }

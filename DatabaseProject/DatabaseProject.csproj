@@ -60,6 +60,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
@@ -275,6 +276,10 @@
     <Content Include="Views\Student\AllCoursesExams.cshtml" />
     <Content Include="Views\Student\RegisterFirstMakeup.cshtml" />
     <Content Include="Views\Student\AllCoursesSlots.cshtml" />
+    <Content Include="Views\Advisor\AllRequests.cshtml" />
+    <Content Include="Views\Advisor\InsertCourseGradPlan.cshtml" />
+    <Content Include="Views\Advisor\PendingRequests.cshtml" />
+    <Content Include="Views\Advisor\UpdateGradPlan.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

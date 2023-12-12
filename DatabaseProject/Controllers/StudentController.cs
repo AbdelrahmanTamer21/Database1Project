@@ -318,16 +318,16 @@ namespace DatabaseProject.Controllers
                 SqlDataReader rdr = cmd.ExecuteReader();
 
                 GraduationPlan graduationPlan = new GraduationPlan();
-
-                if (rdr.HasRows) {
+                if (rdr.HasRows)
+                {
                     rdr.Read();
                     graduationPlan.plan_id = Convert.ToInt16(rdr["plan_id"]);
-                    graduationPlan.expected_grad_date = rdr["expected_grad_date"].ToString();
+                    graduationPlan.expected_grad_date = Convert.ToDateTime(rdr["expected_grad_date"]).ToShortDateString();
                     graduationPlan.student = new Student();
                     graduationPlan.student.student_id = Convert.ToInt32(rdr["student_id"]);
                     graduationPlan.student.f_name = rdr["Student_name"].ToString().Split(' ')[0];
                     graduationPlan.student.l_name = rdr["Student_name"].ToString().Split(' ')[1];
-                    
+
                     // Semester
                     GraduationPlanSemester semester = new GraduationPlanSemester();
 
@@ -340,13 +340,14 @@ namespace DatabaseProject.Controllers
                     semester.courses.Add(new Course(Convert.ToInt32(rdr["course_id"]), rdr["name"].ToString()));
 
                     graduationPlan.semesters.Add(semester);
-                 
-                } else
+
+                }
+                else
                 {
                     rdr.Close();
                     con.Close();
-
-                    return View();
+                    graduationPlan.semesters = new List<GraduationPlanSemester>();
+                    return View(graduationPlan);
                 }
 
                 while (rdr.Read())
