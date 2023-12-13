@@ -114,7 +114,7 @@ namespace DatabaseProject.Controllers
 
                 cmd.Parameters.Add("@student_id", SqlDbType.Int);
                 cmd.Parameters.Add("@current_semester_code", SqlDbType.Int);
-                cmd.Parameters["@student_id"].Value = 1;
+                cmd.Parameters["@student_id"].Value = Session["userID"];
                 cmd.Parameters["@current_semester_code"].Value = "W23";
 
                 List<Course> courses = new List<Course>();
@@ -312,7 +312,7 @@ namespace DatabaseProject.Controllers
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.Add("@student_id", SqlDbType.Int);
-                cmd.Parameters["@student_id"].Value = 1;
+                cmd.Parameters["@student_id"].Value = Session["userID"];
 
                 con.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -386,7 +386,7 @@ namespace DatabaseProject.Controllers
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.Add("@student_id", SqlDbType.Int);
-                cmd.Parameters["@student_id"].Value = 1;
+                cmd.Parameters["@student_id"].Value = Session["userID"];
 
                 List<Installment> installments = new List<Installment>();
 
@@ -536,6 +536,136 @@ namespace DatabaseProject.Controllers
                     course_Slot.instructor = instructor;
 
                     courses.Add(course_Slot);
+                }
+                rdr.Close();
+                con.Close();
+
+                return View(courses);
+            }
+        }
+
+        // G
+        // View the slots of a certain course that is taught by a certain instructor.
+        public ActionResult ViewSlots(FormCollection form)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM dbo.FN_StudentViewSlot(@course_id, instructor_id)", con);
+                cmd.CommandType = CommandType.Text;
+
+                cmd.Parameters.Add("@course_id", SqlDbType.Int);
+                cmd.Parameters.Add("@instructor_id", SqlDbType.Int);
+                cmd.Parameters["@course_id"].Value = form["course_id"];
+                cmd.Parameters["@instructor_id"].Value = form["instructor_id"];
+
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+
+                List<Course_Slot_Instructor> records = new List<Course_Slot_Instructor>();
+
+                while (rdr.Read())
+                {
+                    Course course = new Course();
+                    course.course_id = Convert.ToInt32(rdr["course_id"]);
+                    course.name = rdr["name"].ToString();
+
+                    Slot slot = new Slot();
+                    slot.slot_id = Convert.ToInt32(rdr["slot_id"]);
+                    slot.day = rdr["day"].ToString();
+                    slot.time = rdr["time"].ToString();
+                    slot.location = rdr["location"].ToString();
+
+                    Instructor instructor = new Instructor();
+                    instructor.instructor_id = Convert.ToInt32(rdr["instructor_id"]);
+                    instructor.name = rdr["name"].ToString();
+                    instructor.email = rdr["email"].ToString();
+                    instructor.office = rdr["office"].ToString();
+                    instructor.faculty = rdr["faculty"].ToString();
+
+                    Course_Slot_Instructor course_Slot = new Course_Slot_Instructor();
+                    course_Slot.course = course;
+                    course_Slot.slot = slot;
+                    course_Slot.instructor = instructor;
+
+                    records.Add(course_Slot);
+                }
+                rdr.Close();
+                con.Close();
+
+                return View(records);
+            }
+        }
+
+        // H
+        // Choose the instructor for a certain course
+        public ActionResult ChooseInstructor(FormCollection form)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_StudentChooseInstructor", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                // @StudentID int, @courseID int, @instructorID int, @result bit OUTPUT
+                // set up the parameters
+                cmd.Parameters.Add("@StudentID", SqlDbType.Int);
+                cmd.Parameters.Add("@courseID", SqlDbType.Int);
+                cmd.Parameters.Add("@instructorID", SqlDbType.Int);
+                cmd.Parameters.Add("@current_semester_code", SqlDbType.VarChar, 40);
+
+
+                // set parameter values
+                cmd.Parameters["@StudentID"].Value = form["student_id"];
+                cmd.Parameters["@courseID"].Value = form["course_id"];
+                cmd.Parameters["@instructorID"].Value = form["instructor_id"];
+                cmd.Parameters["@current_semester_code"].Value = form["current_semester_code"];
+
+                // open connection and execute stored procedure
+                con.Open();
+                cmd.ExecuteNonQuery();
+
+                Response.Write("You have successfully chosen the instructor for the course.");
+
+                con.Close();
+                return View();
+            }
+        }
+
+        // I
+        // View all details of all courses with their prerequisites.
+        public ActionResult AllCoursesPrerequisites()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM view_Course_prerequisites", con);
+                cmd.CommandType = CommandType.Text;
+
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+
+                List<Course_Prerequisite> courses = new List<Course_Prerequisite>();
+
+                while (rdr.Read())
+                {
+                    Course course = new Course();
+                    course.course_id = Convert.ToInt32(rdr["course_id"]);
+                    course.name = rdr["name"].ToString();
+                    course.major = rdr["major"].ToString();
+                    course.is_offered = Convert.ToBoolean(rdr["is_offered"]);
+                    course.credit_hours = Convert.ToInt32(rdr["credit_hours"]);
+                    course.semester = Convert.ToInt32(rdr["semester"]);
+
+                    Course_Prerequisite course_Prerequisite = new Course_Prerequisite();
+                    course_Prerequisite.PrerequisiteID = Convert.ToInt32(rdr["preRequsite_course_id"]);
+                    course_Prerequisite.name = rdr["preRequsite_course_name"].ToString();
+                    course_Prerequisite.course = course;
+
+                    courses.Add(course_Prerequisite);
                 }
                 rdr.Close();
                 con.Close();
