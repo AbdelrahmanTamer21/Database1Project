@@ -68,7 +68,7 @@ namespace DatabaseProject.Controllers
         public ActionResult AssignedStudentsCourses()
         {
             ViewBag.Majors = new SelectList(getMajors(),"Value","Text");
-            return View(getAssignedStudents("CS"));
+            return View(getAssignedStudents(""));
         }
         public ActionResult PendingRequests()
         {
@@ -564,6 +564,72 @@ namespace DatabaseProject.Controllers
                     }
                     con.Close();
                     return lstStudent;
+                }
+            }
+        }
+
+        public JsonResult getAssignedStudentsJson(string major)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorViewAssignedStudents", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                List<Student> lstStudent = new List<Student>();
+                using (cmd)
+                {
+                    if (Session["userID"] == null)
+                    {
+                        return Json(lstStudent ,JsonRequestBehavior.AllowGet);
+                    }
+                    //set up parameteres
+                    cmd.Parameters.AddWithValue("@AdvisorID", Session["userID"]);
+                    cmd.Parameters.AddWithValue("@major", major);
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        Student student = new Student();
+                        student.courses = new List<Course>();
+                        if (rdr.Read())
+                        {
+                            student.student_id = Convert.ToInt32(rdr["student_id"]);
+                            student.f_name = rdr["Student_name"].ToString().Split(' ')[0];
+                            student.l_name = rdr["Student_name"].ToString().Split(' ')[1];
+                            student.major = rdr["major"].ToString();
+                            Course course = new Course();
+                            course.name = rdr["Course_name"].ToString();
+                            student.courses.Add(course);
+                        }
+                        while (rdr.Read())
+                        {
+                            if (Convert.ToInt32(rdr["student_id"]) == student.student_id)
+                            {
+                                Course course = new Course();
+                                course.name = rdr["Course_name"].ToString();
+                                student.courses.Add(course);
+                            }
+                            else
+                            {
+                                lstStudent.Add(student);
+                                student = new Student();
+                                student.courses = new List<Course>();
+                                student.student_id = Convert.ToInt32(rdr["student_id"]);
+                                student.f_name = rdr["Student_name"].ToString().Split(' ')[0];
+                                student.l_name = rdr["Student_name"].ToString().Split(' ')[1];
+                                student.major = rdr["major"].ToString();
+                                Course course = new Course();
+                                course.name = rdr["Course_name"].ToString();
+                                student.courses.Add(course);
+                            }
+                        }
+                        lstStudent.Add(student);
+                    }
+                    con.Close();
+                    return Json(lstStudent, JsonRequestBehavior.AllowGet);
                 }
             }
         }
