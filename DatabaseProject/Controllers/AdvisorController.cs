@@ -177,7 +177,7 @@ namespace DatabaseProject.Controllers
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
             {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Student WHERE advisor_id = @advisor_id", con);
+                SqlCommand cmd = new SqlCommand("SELECT * FROM view_Students WHERE advisor_id = @advisor_id", con);
                 cmd.CommandType = CommandType.Text;
                 List<Student> lstStudent = new List<Student>();
                 using (cmd)
@@ -688,11 +688,12 @@ namespace DatabaseProject.Controllers
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
             {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Request", con);
+                SqlCommand cmd = new SqlCommand("SELECT * FROM dbo.FN_Advisors_Requests(@advisor_id)", con);
                 cmd.CommandType = CommandType.Text;
                 List<Request> lstRequest = new List<Request>();
                 using (cmd)
                 {
+                    cmd.Parameters.AddWithValue("@advisor_id", Session["userID"]);
                     //open connection and execute stored procedure
                     con.Open();
                     cmd.ExecuteNonQuery();
