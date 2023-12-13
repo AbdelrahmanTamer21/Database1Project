@@ -1,0 +1,41 @@
+﻿@model IEnumerable<DatabaseProject.Models.Course_Prerequisite>
+
+@{
+    ViewBag.Title = "AllCoursesPrerequisites";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>AllCoursesPrerequisites</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.PrerequisiteID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.name)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.PrerequisiteID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.name)
+        </td>
+        @foreach (var course_prop in item.course)
+        {
+            <td>
+                @Html.DisplayFor(modelItem => course_prop.name)
+            </td>
+        }
+    </tr>
+}
+
+</table>

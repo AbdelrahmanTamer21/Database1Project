@@ -164,6 +164,7 @@
     </Compile>
     <Compile Include="Models\Advisor.cs" />
     <Compile Include="Models\Course.cs" />
+    <Compile Include="Models\Course_Prerequisite.cs" />
     <Compile Include="Models\Course_Slot_Instructor.cs" />
     <Compile Include="Models\GraduationPlan.cs" />
     <Compile Include="Models\GradutaionPlanSemester.cs" />
@@ -276,6 +277,8 @@
     <Content Include="Views\Student\AllCoursesExams.cshtml" />
     <Content Include="Views\Student\RegisterFirstMakeup.cshtml" />
     <Content Include="Views\Student\AllCoursesSlots.cshtml" />
+    <Content Include="Views\Student\ViewSlots.cshtml" />
+    <Content Include="Views\Student\AllCoursesPrerequisites.cshtml" />
     <Content Include="Views\Advisor\AllRequests.cshtml" />
     <Content Include="Views\Advisor\InsertCourseGradPlan.cshtml" />
     <Content Include="Views\Advisor\PendingRequests.cshtml" />
