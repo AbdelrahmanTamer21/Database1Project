@@ -6,11 +6,24 @@
 
 <h2>GraduationPlan</h2>
 
-<p>
-    PlanId: @Html.DisplayFor(model => model.plan_id)
-    <br />
-    StudentId: @Html.DisplayFor(model => model.student.student_id)
-</p>
+<div class="card mt-3">
+    <div class="card-body row">
+        <div class="col">
+            <p class="m-0">
+                PlanId: @Html.DisplayFor(model => model.plan_id)
+                <br />
+                Expected graduation date: @Html.DisplayFor(model => model.expected_grad_date)
+            </p>
+        </div>
+        <div class="col">
+            <p class="m-0">
+                StudentId: @Request.QueryString["student_id"]
+                <br />
+                Student Name: @Html.DisplayFor(model => model.student.f_name) @Html.DisplayFor(model => model.student.l_name)
+            </p>
+        </div>
+    </div>
+</div>
 <table class="table">
     <tr>
         <th>
@@ -19,24 +32,30 @@
         <th>
             Credit Hours
         </th>
+        <th>
+            Course Name
+        </th>
+        <th></th>
     </tr>
 
     @foreach (var item in Model.semesters)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.semester_code)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.credit_hours)
-            </td>
-            @foreach (var course in item.courses)
-            {
+        <!--loop over the courses and display them-->
+        foreach (var course in item.courses)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.semester_code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.credit_hours)
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => course.name)
                 </td>
-            }
-        </tr>
+            </tr>
+        }
     }
 
 </table>
+

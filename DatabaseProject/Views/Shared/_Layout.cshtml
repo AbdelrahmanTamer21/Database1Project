@@ -22,6 +22,7 @@
                     {
                         <li class="nav-item">@Html.ActionLink("PendingRequests", "PendingRequests", null, new { @class = "nav-link active" })</li>
                         <li class="nav-item">@Html.ActionLink("AllRequests", "AllRequests", null, new { @class = "nav-link active" })</li>
+                        <li class="nav-item">@Html.ActionLink("AssignedStudents", "AssignedStudentsCourses", null, new { @class = "nav-link active" })</li>
                     }
                 </ul>
                 @if (HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString() != "Home")

@@ -6,42 +6,96 @@
 
 <h2>Current assigned students with thier courses</h2>
 
-@Html.DropDownList("Major",ViewBag.Majors as SelectList, new { @class="form-select w-25"})
-<table class="table">
-    <tr>
-        <th>
-            Student ID
-        </th>
-        <th>
-            Student Name
-        </th>
-        <th>
-            Major
-        </th>
-        <th>
-            Course Name
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    foreach (var course in item.courses)
-    {
+@Html.DropDownList("Major", ViewBag.Majors as SelectList,"Select", new { @class = "form-select w-25 mt-4", @id = "majorDropdown" })
+<table class="table mt-2" id="studentsTable">
+    <thead>
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.student_id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.f_name) @Html.DisplayFor(modelItem => item.l_name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.major)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => course.name)
-            </td>
+            <th>
+                Student ID
+            </th>
+            <th>
+                Student Name
+            </th>
+            <th>
+                Major
+            </th>
+            <th>
+                Course Name
+            </th>
+            <th></th>
         </tr>
-    }
-}
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            foreach (var course in item.courses)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.student_id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.f_name) @Html.DisplayFor(modelItem => item.l_name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.major)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => course.name)
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
 
 </table>
+
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+        $("#majorDropdown")[0].selectedIndex = 0;
+        // Attach click event to the refresh button
+        $("#majorDropdown").change(function () {
+            // Fetch updated data from the server when the dropdown selection changes
+            var major = $(this).val();
+            getAssignedStudentsFromServer(major);
+        });
+
+        function getAssignedStudentsFromServer(major) {
+            $.ajax({
+                url: '/Advisor/getAssignedStudentsJson', // Update with your actual controller name
+                type: 'GET',
+                data: { major: major },
+                dataType: 'json',
+                success: function (data) {
+                    // Update the table with the new data
+                    updateTable(data);
+                },
+                error: function (error) {
+                    console.error('Error fetching assigned students: ', error);
+                }
+            });
+        }
+
+        function updateTable(data) {
+            // Clear existing rows
+            $("#studentsTable tbody").empty();
+
+            // Add new rows with the updated data
+            $.each(data, function (index, item) {
+                $.each(item.courses, function (courseIndex, course) {
+                    var newRow = "<tr>" +
+                        "<td>" + item.student_id + "</td>" +
+                        "<td>" + item.f_name + " " + item.l_name + "</td>" +
+                        "<td>" + item.major + "</td>" +
+                        "<td>" + course.name + "</td>" +
+                        "</tr>";
+
+                    $("#studentsTable tbody").append(newRow);
+                });
+            });
+        }
+    });
+    </script>
+}

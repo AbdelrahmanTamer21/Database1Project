@@ -11,6 +11,9 @@ using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Xml.Linq;
+using System.Windows.Forms;
+using FormCollection = System.Web.Mvc.FormCollection;
+using System.Web.UI;
 
 namespace DatabaseProject.Controllers
 {
@@ -65,7 +68,7 @@ namespace DatabaseProject.Controllers
         public ActionResult AssignedStudentsCourses()
         {
             ViewBag.Majors = new SelectList(getMajors(),"Value","Text");
-            return View(getAssignedStudents("CS"));
+            return View(getAssignedStudents(""));
         }
         public ActionResult PendingRequests()
         {
@@ -103,7 +106,7 @@ namespace DatabaseProject.Controllers
 
                         //get the output variable
                         int id = Convert.ToInt32(cmd.Parameters["@Advisor_id"].Value);
-                        TempData["Alert"] = "New Student ID: " + id;
+                        MessageBox.Show("New Student ID: " + id);
                         con.Close();
                         return RedirectToAction("Index");
                     }
@@ -174,7 +177,7 @@ namespace DatabaseProject.Controllers
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
             {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Student WHERE advisor_id = @advisor_id", con);
+                SqlCommand cmd = new SqlCommand("SELECT * FROM view_Students WHERE advisor_id = @advisor_id", con);
                 cmd.CommandType = CommandType.Text;
                 List<Student> lstStudent = new List<Student>();
                 using (cmd)
@@ -234,7 +237,7 @@ namespace DatabaseProject.Controllers
                 {
                     rdr.Read();
                     graduationPlan.plan_id = Convert.ToInt16(rdr["plan_id"]);
-                    graduationPlan.expected_grad_date = rdr["expected_grad_date"].ToString();
+                    graduationPlan.expected_grad_date = Convert.ToDateTime(rdr["expected_grad_date"]).ToShortDateString();
                     graduationPlan.student = new Student();
                     graduationPlan.student.student_id = Convert.ToInt32(rdr["student_id"]);
                     graduationPlan.student.f_name = rdr["Student_name"].ToString().Split(' ')[0];
@@ -341,7 +344,7 @@ namespace DatabaseProject.Controllers
             }
             catch(Exception ex)
             {
-                TempData["Alert"] = ex.Message;
+                MessageBox.Show(ex.Message);
                 return RedirectToAction("InsertGradPlan", new { student_id = student_id });
             }
         }
@@ -362,6 +365,39 @@ namespace DatabaseProject.Controllers
                         cmd.Parameters.AddWithValue("@student_id", student_id);
                         cmd.Parameters.AddWithValue("@Semester_code", form["semester_code"]);
                         cmd.Parameters.AddWithValue("@course_name", form["course_name"]);
+
+                        //open connection and execute stored procedure
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+
+                        con.Close();
+                    }
+                }
+                return RedirectToAction("GradPlan", new { student_id = student_id });
+            }
+            catch (Exception ex)
+            {
+                TempData["Alert"] = ex.Message;
+                return RedirectToAction("InsertGradPlan", new { student_id = student_id });
+            }
+        }
+
+        public ActionResult DeleteCourseFromGradPlan(int student_id, string sem_code, int course_id)
+        {
+            try
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+                using (con)
+                {
+                    SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorDeleteFromGP", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    using (cmd)
+                    {
+
+                        //set up the parameters
+                        cmd.Parameters.AddWithValue("@studentID", student_id);
+                        cmd.Parameters.AddWithValue("@sem_code", sem_code);
+                        cmd.Parameters.AddWithValue("@courseID", course_id);
 
                         //open connection and execute stored procedure
                         con.Open();
@@ -532,6 +568,72 @@ namespace DatabaseProject.Controllers
             }
         }
 
+        public JsonResult getAssignedStudentsJson(string major)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorViewAssignedStudents", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                List<Student> lstStudent = new List<Student>();
+                using (cmd)
+                {
+                    if (Session["userID"] == null)
+                    {
+                        return Json(lstStudent ,JsonRequestBehavior.AllowGet);
+                    }
+                    //set up parameteres
+                    cmd.Parameters.AddWithValue("@AdvisorID", Session["userID"]);
+                    cmd.Parameters.AddWithValue("@major", major);
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        Student student = new Student();
+                        student.courses = new List<Course>();
+                        if (rdr.Read())
+                        {
+                            student.student_id = Convert.ToInt32(rdr["student_id"]);
+                            student.f_name = rdr["Student_name"].ToString().Split(' ')[0];
+                            student.l_name = rdr["Student_name"].ToString().Split(' ')[1];
+                            student.major = rdr["major"].ToString();
+                            Course course = new Course();
+                            course.name = rdr["Course_name"].ToString();
+                            student.courses.Add(course);
+                        }
+                        while (rdr.Read())
+                        {
+                            if (Convert.ToInt32(rdr["student_id"]) == student.student_id)
+                            {
+                                Course course = new Course();
+                                course.name = rdr["Course_name"].ToString();
+                                student.courses.Add(course);
+                            }
+                            else
+                            {
+                                lstStudent.Add(student);
+                                student = new Student();
+                                student.courses = new List<Course>();
+                                student.student_id = Convert.ToInt32(rdr["student_id"]);
+                                student.f_name = rdr["Student_name"].ToString().Split(' ')[0];
+                                student.l_name = rdr["Student_name"].ToString().Split(' ')[1];
+                                student.major = rdr["major"].ToString();
+                                Course course = new Course();
+                                course.name = rdr["Course_name"].ToString();
+                                student.courses.Add(course);
+                            }
+                        }
+                        lstStudent.Add(student);
+                    }
+                    con.Close();
+                    return Json(lstStudent, JsonRequestBehavior.AllowGet);
+                }
+            }
+        }
+
         public List<Request> getPendingRequests(int advisor_id)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -586,11 +688,12 @@ namespace DatabaseProject.Controllers
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
             {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Request", con);
+                SqlCommand cmd = new SqlCommand("SELECT * FROM dbo.FN_Advisors_Requests(@advisor_id)", con);
                 cmd.CommandType = CommandType.Text;
                 List<Request> lstRequest = new List<Request>();
                 using (cmd)
                 {
+                    cmd.Parameters.AddWithValue("@advisor_id", Session["userID"]);
                     //open connection and execute stored procedure
                     con.Open();
                     cmd.ExecuteNonQuery();
