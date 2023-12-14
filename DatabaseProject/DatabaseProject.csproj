@@ -274,7 +274,7 @@
     <Content Include="Views\Advisor\AssignedStudentsCourses.cshtml" />
     <Content Include="Views\Student\UpcomingInstallments.cshtml" />
     <Content Include="Views\Student\AllCoursesExams.cshtml" />
-    <Content Include="Views\Student\RegisterFirstMakeup.cshtml" />
+    <Content Include="Views\Student\RegisterFirstMakeupForm.cshtml" />
     <Content Include="Views\Student\AllCoursesSlots.cshtml" />
     <Content Include="Views\Student\ViewSlots.cshtml" />
     <Content Include="Views\Student\AllCoursesPrerequisites.cshtml" />
