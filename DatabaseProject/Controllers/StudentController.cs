@@ -28,7 +28,7 @@ namespace DatabaseProject.Controllers
         }
         ///////////// PART 1 /////////////
         /// A
-        public int registerStudent(FormCollection form)
+        public ActionResult registerStudent(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -67,10 +67,11 @@ namespace DatabaseProject.Controllers
                     int id = Convert.ToInt32(cmd.Parameters["@Student_id"].Value);
 
                     con.Close();
-                    return id;
+                    return View();
                 }
             }
         }
+
         /// C
         public void addStudentPhone(FormCollection form)
         {
