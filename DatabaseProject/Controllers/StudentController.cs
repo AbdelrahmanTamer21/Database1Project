@@ -505,6 +505,8 @@ namespace DatabaseProject.Controllers
         // Register for second makeup exam. You should show the output response.
         public ActionResult RegisterSecondMakeupForm()
         {
+            ViewBag.Courses = new SelectList(AdvisorController.getCourseIDs(), "Value", "Text");
+            ViewBag.Semesters = new SelectList(AdvisorController.getSemesters(), "Value", "Text");
             return View();
         }
 
@@ -530,7 +532,7 @@ namespace DatabaseProject.Controllers
                 // set parameter values
                 cmd.Parameters["@StudentID"].Value = Convert.ToInt32(form["student_id"]);
                 cmd.Parameters["@courseID"].Value = Convert.ToInt32(form["course_id"]);
-                cmd.Parameters["@StudentID"].Value = form["studentCurr_sem"];
+                cmd.Parameters["@studentCurr_sem"].Value = form["studentCurr_sem"];
 
                 // open connection and execute stored procedure
                 con.Open();
@@ -538,15 +540,16 @@ namespace DatabaseProject.Controllers
 
                 if (Convert.ToBoolean(cmd.Parameters["@result"].Value))
                 {
-                    ViewBag.Message = "You have successfully registered for the second makeup exam.";
+                    TempData["Alert"] = "You have successfully registered for the first makeup exam.";
+                    con.Close();
+                    return RedirectToAction("Index");
                 }
                 else
                 {
-                    ViewBag.Message = "You couldn't register for the second makeup exam.";
+                    TempData["Alert"] = "You couldn't register for the first makeup exam.";
+                    con.Close();
+                    return RedirectToAction("RegisterFirstMakeupForm");
                 }
-
-                con.Close();
-                return View();
             }
         }
         // F
