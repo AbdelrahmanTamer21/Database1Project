@@ -10,6 +10,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using System.Xml.Linq;
 
 namespace DatabaseProject.Controllers
@@ -118,38 +119,57 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
-        /*
-        private List<Request> listAllPendingRequests()
-        {
-            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
-            using (con)
-            {
-                SqlCommand cmd = new SqlCommand("Select * from all_Pending_Requests", con);
-                cmd.CommandType = CommandType.Text;
-                List<Request> lstPendingRequest = new List<Request>();
-                using (cmd)
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
+        
+        public List<Request> AdminListPendingRequests()
+ {
+     SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+     using (con)
+     {
+         SqlCommand cmd = new SqlCommand("select* from all_Pending_Requests", con);
+         cmd.CommandType = CommandType.StoredProcedure;
+         List<Request> lstRequest = new List<Request>();
+         using (cmd)
+         {
+             //set up parameteres
+           //cmd.Parameters.AddWithValue("@Advisor_ID", advisor_id);
 
-                    //open connection and execute stored procedure
-                    con.Open();
-                    cmd.ExecuteNonQuery();
+             //open connection and execute stored procedure
+             con.Open();
+             cmd.ExecuteNonQuery();
 
-                    using (SqlDataReader rdr = cmd.ExecuteReader())
-                    {
-                        while (rdr.Read())
-                        {
-                            Request request = new Request();
-                            // lma ne3raf
-                            lstPendingRequest.add(request);
-                        }
-                    }
-                    con.Close();
-                    return lstPendingRequest;
-                }
-            }
-        }
-        */
+             using (SqlDataReader rdr = cmd.ExecuteReader())
+             {
+                 while(rdr.Read())
+                 {
+                     Request request = new Request();
+                     request.request_id = Convert.ToInt16(rdr["request_id"]);
+                     request.type = rdr["type"].ToString();
+                     request.comment = rdr["comment"].ToString();
+                     request.status = rdr["status"].ToString();
+                     switch (request.type)
+                     {
+                         case "credit_hours": 
+                             request.credit_hours = Convert.ToInt16(rdr["credit_hours"]); 
+                             break;
+                         case "course":
+                             request.course = new Course();
+                             request.course.course_id = Convert.ToInt16(rdr["course_id"]);
+                             break;
+                     }
+                     request.student = new Student();
+                     request.student.f_name = rdr["f_name"].ToString();
+                     request.student.l_name = rdr["l_name"].ToString();
+                     request.advisor = new Advisor();
+                     request.advisor.name = rdr["name"].ToString();
+                            lstRequest.Add(request);
+                 }
+             }
+             con.Close();
+             return lstRequest;
+         }
+     }
+ }
+        
         private void AddSemester(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -290,6 +310,108 @@ namespace DatabaseProject.Controllers
             }
 
         }
+        private void student_course_instructor(FormCollection form)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdminLinkStudent", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                using (cmd)
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    //set up the parameters
+                    cmd.Parameters.Add("@cours_id", SqlDbType.Int);
+                    cmd.Parameters.Add("@instructor_id", SqlDbType.Int);
+                    cmd.Parameters.Add("@studentID", SqlDbType.Int);
+                    cmd.Parameters.Add("semester_code", SqlDbType.VarChar);
+
+
+                    //state ouput variable
+                    cmd.Parameters.Add("@semester_code", SqlDbType.Int).Direction = ParameterDirection.Output;
+
+                    //set parameter values
+                    cmd.Parameters["@cours_id"].Value = form["cours_id"];
+                    cmd.Parameters["@instructor_id"].Value = form["instructor_id"];
+                    cmd.Parameters["@studentID"].Value = form["studentID"];
+                    cmd.Parameters["@semester_code"].Value = form["semester_code"];
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    con.Close();
+
+                }
+
+            }
+
+        }
+        private void instructor_assingedcourses(object sender, EventArgs e)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Instructors_AssignedCourses", con);
+                cmd.CommandType = CommandType.Text;
+              //  List<Instructor> lstInstructor = new List<Instructor>();
+              
+                // List < Request > lstRequest = new List<Request>();
+                using (cmd)
+                {
+                    //set up parameteres
+                 //   cmd.Parameters.AddWithValue("@instructor_id", instructor_id);
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                       
+                    }
+                    con.Close();
+                    string view = "SELECT * FROM Semster_offered_Courses";
+                    SqlDataAdapter views = new SqlDataAdapter(view, con);
+                    DataTable dataTable = new DataTable();
+                    views.Fill(dataTable);
+                    //  YourGridView.DataSource = dataTable;
+                    //  YourGridView.DataBind();
+                }
+            }
+        }
+        private void semesters_offeredcourses(object sender, EventArgs e)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT* FROM Semster_offered_Courses", con);
+                cmd.CommandType = CommandType.Text;
+               // List<Course> lstCourse = new List<Course>();
+                using (cmd)
+                {
+                    //set up parameteres
+                    //cmd.Parameters.AddWithValue("@Advisor_ID", advisor_id);
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                      
+                    con.Close();
+                        string view = "SELECT * FROM Semster_offered_Courses";
+                        SqlDataAdapter views = new SqlDataAdapter(view, con);
+                        DataTable dataTable = new DataTable();
+                        views.Fill(dataTable);
+                      //  YourGridView.DataSource = dataTable;
+                      //  YourGridView.DataBind();
+                    }
+            }
+        }
+    }
 
         public void deleteCourse(FormCollection form)
         {
