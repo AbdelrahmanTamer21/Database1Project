@@ -489,14 +489,15 @@ namespace DatabaseProject.Controllers
                 if (Convert.ToBoolean(cmd.Parameters["@result"].Value))
                 {
                     TempData["Alert"] = "You have successfully registered for the first makeup exam.";
+                    con.Close();
+                    return RedirectToAction("Index");
                 }
                 else
                 {
                     TempData["Alert"] = "You couldn't register for the first makeup exam.";
+                    con.Close();
+                    return RedirectToAction("RegisterFirstMakeupForm");
                 }
-
-                con.Close();
-                return RedirectToAction("Index");
             }
         }
 
