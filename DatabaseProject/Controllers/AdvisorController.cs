@@ -4,16 +4,9 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
-using System.Diagnostics;
-using System.Linq;
-using System.Web;
-using System.Web.Helpers;
 using System.Web.Mvc;
-using System.Xml.Linq;
 using System.Windows.Forms;
 using FormCollection = System.Web.Mvc.FormCollection;
-using System.Web.UI;
 
 namespace DatabaseProject.Controllers
 {
@@ -106,7 +99,7 @@ namespace DatabaseProject.Controllers
 
                         //get the output variable
                         int id = Convert.ToInt32(cmd.Parameters["@Advisor_id"].Value);
-                        MessageBox.Show("New Student ID: " + id);
+                        TempData["Alert"] = "New Student ID: " + id;
                         con.Close();
                         return RedirectToAction("Index");
                     }
@@ -163,6 +156,8 @@ namespace DatabaseProject.Controllers
 
                             Session["userID"] = form["advisor_id"];
                             Session["type"] = "Advisor";
+
+                            TempData["Alert"] = "Login successful";
                             return RedirectToAction("Index");
                         }
                     }
@@ -344,7 +339,7 @@ namespace DatabaseProject.Controllers
             }
             catch(Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                TempData["Alert"] = ex.Message;
                 return RedirectToAction("InsertGradPlan", new { student_id = student_id });
             }
         }
@@ -378,7 +373,7 @@ namespace DatabaseProject.Controllers
             catch (Exception ex)
             {
                 TempData["Alert"] = ex.Message;
-                return RedirectToAction("InsertGradPlan", new { student_id = student_id });
+                return RedirectToAction("GradPlan", new { student_id = student_id });
             }
         }
 
@@ -773,6 +768,15 @@ namespace DatabaseProject.Controllers
                     cmd.ExecuteNonQuery();
 
                     con.Close();
+                    bool status = CheckRequestStatus(request_id);
+                    if (status)
+                    {
+                        MessageBox.Show("The request is accepted");
+                    }
+                    else
+                    {
+                        MessageBox.Show("The request is rejected");
+                    }
                     return RedirectToAction("PendingRequests");
                 }
             }
@@ -796,9 +800,48 @@ namespace DatabaseProject.Controllers
                     cmd.ExecuteNonQuery();
 
                     con.Close();
+                    bool status = CheckRequestStatus(request_id);
+                    if (status)
+                    {
+                        MessageBox.Show("The request is accepted");
+                    }
+                    else
+                    {
+                        MessageBox.Show("The request is rejected");
+                    }
                     return RedirectToAction("PendingRequests");
                 }
             }
+        }
+
+        public bool CheckRequestStatus(int request_id)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT status FROM Request WHERE request_id = @request_id", con);
+                cmd.CommandType = CommandType.Text;
+                using (cmd)
+                {
+                    //set up parameteres
+                    cmd.Parameters.AddWithValue("@request_id", request_id);
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            if (rdr["status"].ToString() == "Accept")
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    con.Close();
+                }
+            }
+            return false;
         }
     }
 }

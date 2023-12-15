@@ -18,11 +18,13 @@
                 PlanId: @Html.DisplayFor(model => model.plan_id)
                 <br />
                 Expected graduation date: @Html.DisplayFor(model => model.expected_grad_date)
+                <br />
+                Advisor ID: @Html.DisplayFor(model => model.semesters.First().advisor.advisor_id)
             </p>
         </div>
         <div class="col">
             <p class="m-0">
-                StudentId: @Request.QueryString["student_id"]
+                Student ID: @Request.QueryString["student_id"]
                 <br />
                 Student Name: @Html.DisplayFor(model => model.student.f_name) @Html.DisplayFor(model => model.student.l_name)
             </p>

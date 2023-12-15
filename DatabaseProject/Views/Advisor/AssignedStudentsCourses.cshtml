@@ -4,7 +4,7 @@
     ViewBag.Title = "AssignedStudentsCourses";
 }
 
-<h2>Current assigned students with thier courses</h2>
+<h2>Current assigned students with their courses</h2>
 
 @Html.DropDownList("Major", ViewBag.Majors as SelectList,"Select", new { @class = "form-select w-25 mt-4", @id = "majorDropdown" })
 <table class="table mt-2" id="studentsTable">

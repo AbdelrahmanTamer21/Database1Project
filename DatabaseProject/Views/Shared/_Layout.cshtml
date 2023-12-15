@@ -47,7 +47,10 @@
     </div>
     @if (TempData["Alert"] != null)
     {
-        <script language='javascript' type='text/javascript'>alert("@TempData["Alert"]");</script>
+        <script language='javascript' type='text/javascript'>
+            var string = @Html.Raw(Json.Encode(TempData["Alert"]));
+            alert("Error Message",string);
+        </script>
     }
     @Scripts.Render("~/bundles/scripts")
     @RenderSection("scripts", required: false)

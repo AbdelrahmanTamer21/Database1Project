@@ -451,7 +451,7 @@ namespace DatabaseProject.Controllers
         // D
         // Register for first makeup exam. You should show the output response.
         // not working
-        public ActionResult RegisterFirstMakeup(FormCollection form)
+        public ActionResult View_RegisterFirstMakeup(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
 
