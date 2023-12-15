@@ -452,6 +452,8 @@ namespace DatabaseProject.Controllers
         // Register for first makeup exam. You should show the output response.
         public ActionResult RegisterFirstMakeupForm()
         {
+            ViewBag.Courses = new SelectList(AdvisorController.getCoureNames(), "Value", "Text");
+            ViewBag.Semesters = new SelectList(AdvisorController.getSemesters(), "Value", "Text");
             return View();
         }
 
@@ -475,7 +477,7 @@ namespace DatabaseProject.Controllers
                 cmd.Parameters.Add("@result", SqlDbType.Bit).Direction = ParameterDirection.Output;
 
                 // set parameter values
-                cmd.Parameters["@StudentID"].Value = Convert.ToInt32(form["student_id"]);
+                cmd.Parameters["@StudentID"].Value = Convert.ToInt32(Session["userID"]);
                 cmd.Parameters["@courseID"].Value = Convert.ToInt32(form["course_id"]);
                 cmd.Parameters["@StudentID"].Value = form["studentCurr_sem"];
 

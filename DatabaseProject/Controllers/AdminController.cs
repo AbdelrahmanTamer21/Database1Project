@@ -22,13 +22,16 @@ namespace DatabaseProject.Controllers
         {
             return View();
         }
-        
-        public ActionResult Login() {
+
+        public ActionResult Login()
+        {
             return View();
         }
 
-        public ActionResult loginAdmin(FormCollection form) {
-            if (form["admin_id"] == "1" && form["password"] == "pass") {
+        public ActionResult loginAdmin(FormCollection form)
+        {
+            if (form["admin_id"] == "1" && form["password"] == "pass")
+            {
                 TempData["LoginError"] = null;
 
                 Session["userID"] = form["admin_id"];
@@ -40,7 +43,7 @@ namespace DatabaseProject.Controllers
                 TempData["LoginError"] = "ID or Password are wrong";
                 return RedirectToAction("Login");
             }
-        
+
         }
         private List<Advisor> listAllAdvisors()
         {
@@ -110,7 +113,7 @@ namespace DatabaseProject.Controllers
                             student.acquired_hours = Convert.ToInt16(rdr["acquired_hours"]);
                             student.assigned_hours = Convert.ToInt16(rdr["assigned_hours"]);
                             student.advisor = new Advisor();
-                            student.advisor.advisor_id = Convert.ToInt16(rdr["advisor_id"]); 
+                            student.advisor.advisor_id = Convert.ToInt16(rdr["advisor_id"]);
                             lstStudent.Add(student);
                         }
                     }
@@ -119,58 +122,58 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
-        
+
         public List<Request> AdminListPendingRequests()
- {
-     SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
-     using (con)
-     {
-         SqlCommand cmd = new SqlCommand("select* from all_Pending_Requests", con);
-         cmd.CommandType = CommandType.StoredProcedure;
-         List<Request> lstRequest = new List<Request>();
-         using (cmd)
-         {
-             //set up parameteres
-           //cmd.Parameters.AddWithValue("@Advisor_ID", advisor_id);
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM all_Pending_Requests", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                List<Request> lstRequest = new List<Request>();
+                using (cmd)
+                {
+                    //set up parameteres
+                    //cmd.Parameters.AddWithValue("@Advisor_ID", advisor_id);
 
-             //open connection and execute stored procedure
-             con.Open();
-             cmd.ExecuteNonQuery();
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
 
-             using (SqlDataReader rdr = cmd.ExecuteReader())
-             {
-                 while(rdr.Read())
-                 {
-                     Request request = new Request();
-                     request.request_id = Convert.ToInt16(rdr["request_id"]);
-                     request.type = rdr["type"].ToString();
-                     request.comment = rdr["comment"].ToString();
-                     request.status = rdr["status"].ToString();
-                     switch (request.type)
-                     {
-                         case "credit_hours": 
-                             request.credit_hours = Convert.ToInt16(rdr["credit_hours"]); 
-                             break;
-                         case "course":
-                             request.course = new Course();
-                             request.course.course_id = Convert.ToInt16(rdr["course_id"]);
-                             break;
-                     }
-                     request.student = new Student();
-                     request.student.f_name = rdr["f_name"].ToString();
-                     request.student.l_name = rdr["l_name"].ToString();
-                     request.advisor = new Advisor();
-                     request.advisor.name = rdr["name"].ToString();
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            Request request = new Request();
+                            request.request_id = Convert.ToInt16(rdr["request_id"]);
+                            request.type = rdr["type"].ToString();
+                            request.comment = rdr["comment"].ToString();
+                            request.status = rdr["status"].ToString();
+                            switch (request.type)
+                            {
+                                case "credit_hours":
+                                    request.credit_hours = Convert.ToInt16(rdr["credit_hours"]);
+                                    break;
+                                case "course":
+                                    request.course = new Course();
+                                    request.course.course_id = Convert.ToInt16(rdr["course_id"]);
+                                    break;
+                            }
+                            request.student = new Student();
+                            request.student.f_name = rdr["f_name"].ToString();
+                            request.student.l_name = rdr["l_name"].ToString();
+                            request.advisor = new Advisor();
+                            request.advisor.name = rdr["name"].ToString();
                             lstRequest.Add(request);
-                 }
-             }
-             con.Close();
-             return lstRequest;
-         }
-     }
- }
-        
-        private void AddSemester(FormCollection form)
+                        }
+                    }
+                    con.Close();
+                    return lstRequest;
+                }
+            }
+        }
+
+        private ActionResult AddSemester(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -198,13 +201,14 @@ namespace DatabaseProject.Controllers
                     cmd.ExecuteNonQuery();
 
                     con.Close();
+                    return RedirectToAction("Index");
                 }
 
             }
 
 
         }
-        private void AddCourse(FormCollection form)
+        private ActionResult AddCourse(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -233,14 +237,14 @@ namespace DatabaseProject.Controllers
 
 
                     con.Close();
-
+                    return RedirectToAction("Index");
                 }
 
             }
 
 
         }
-        private void AdminLinkInstructor(FormCollection form)
+        private ActionResult AdminLinkInstructor(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -271,7 +275,7 @@ namespace DatabaseProject.Controllers
 
 
                     con.Close();
-
+                    return RedirectToAction("Index");
                 }
 
             }
@@ -355,13 +359,13 @@ namespace DatabaseProject.Controllers
             {
                 SqlCommand cmd = new SqlCommand("SELECT * FROM Instructors_AssignedCourses", con);
                 cmd.CommandType = CommandType.Text;
-              //  List<Instructor> lstInstructor = new List<Instructor>();
-              
+                //  List<Instructor> lstInstructor = new List<Instructor>();
+
                 // List < Request > lstRequest = new List<Request>();
                 using (cmd)
                 {
                     //set up parameteres
-                 //   cmd.Parameters.AddWithValue("@instructor_id", instructor_id);
+                    //   cmd.Parameters.AddWithValue("@instructor_id", instructor_id);
 
                     //open connection and execute stored procedure
                     con.Open();
@@ -369,7 +373,7 @@ namespace DatabaseProject.Controllers
 
                     using (SqlDataReader rdr = cmd.ExecuteReader())
                     {
-                       
+
                     }
                     con.Close();
                     string view = "SELECT * FROM Semster_offered_Courses";
@@ -388,7 +392,7 @@ namespace DatabaseProject.Controllers
             {
                 SqlCommand cmd = new SqlCommand("SELECT* FROM Semster_offered_Courses", con);
                 cmd.CommandType = CommandType.Text;
-               // List<Course> lstCourse = new List<Course>();
+                // List<Course> lstCourse = new List<Course>();
                 using (cmd)
                 {
                     //set up parameteres
@@ -400,18 +404,18 @@ namespace DatabaseProject.Controllers
 
                     using (SqlDataReader rdr = cmd.ExecuteReader())
                     {
-                      
-                    con.Close();
+
+                        con.Close();
                         string view = "SELECT * FROM Semster_offered_Courses";
                         SqlDataAdapter views = new SqlDataAdapter(view, con);
                         DataTable dataTable = new DataTable();
                         views.Fill(dataTable);
-                      //  YourGridView.DataSource = dataTable;
-                      //  YourGridView.DataBind();
+                        //  YourGridView.DataSource = dataTable;
+                        //  YourGridView.DataBind();
                     }
+                }
             }
         }
-    }
 
         public void deleteCourse(FormCollection form)
         {
@@ -451,7 +455,7 @@ namespace DatabaseProject.Controllers
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     //set up the parameters
-                    cmd.Parameters.Add("@Type", SqlDbType.VarChar,40);
+                    cmd.Parameters.Add("@Type", SqlDbType.VarChar, 40);
                     cmd.Parameters.Add("@date", SqlDbType.DateTime);
                     cmd.Parameters.Add("@courseID", SqlDbType.Int);
 
@@ -470,6 +474,6 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
-    }  
+    }
 }
 

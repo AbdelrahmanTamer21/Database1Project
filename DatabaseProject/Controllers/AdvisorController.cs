@@ -410,7 +410,7 @@ namespace DatabaseProject.Controllers
             }
         }
 
-        private List<SelectListItem> getSemesters()
+        public static List<SelectListItem> getSemesters()
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -439,7 +439,7 @@ namespace DatabaseProject.Controllers
             }
         }
 
-        private List<SelectListItem> getMajors()
+        public static List<SelectListItem> getMajors()
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -468,7 +468,7 @@ namespace DatabaseProject.Controllers
             }
         }
 
-        private List<SelectListItem> getCoureNames()
+        public static List<SelectListItem> getCoureNames()
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
