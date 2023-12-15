@@ -259,8 +259,8 @@ CREATE PROC [Procedures_StudentRegistration]
      @Semester int,
      @Student_id int OUTPUT
      AS 
-     insert into Student  (f_name,l_name,password, faculty, email, major, semester) 
-     values (@first_name, @last_name, @password, @faculty, @email, @major, @Semester)
+     insert into Student  (f_name,l_name,password, faculty, email, major, semester, financial_status) 
+     values (@first_name, @last_name, @password, @faculty, @email, @major, @Semester, 1)
     
     Select @Student_id =  student_id from Student 
      where f_name = @first_name and
@@ -624,10 +624,27 @@ CREATE PROC [Procedures_AdvisorCreateGP]
 @student_id int
 
 AS
-declare @student_acquired int 
+declare @student_acquired int,@plan_id int
 Select @student_acquired  =  Student.acquired_hours from  Student where Student.student_id = @student_id
-If(@student_acquired >=157)
-insert into Graduation_Plan values (@Semester_code, @sem_credit_hours, @expected_graduation_date, @advisor_id, @student_id) 
+If(Exists(Select * from Graduation_Plan Where student_id = @student_id))
+begin
+    Select @plan_id = plan_id from Graduation_Plan Where student_id = @student_id
+    If(@student_acquired >=157)
+    begin
+    Set IDENTITY_INSERT Graduation_Plan ON
+    insert into Graduation_Plan(plan_id,semester_code,semester_credit_hours,expected_grad_date,advisor_id,student_id)
+    values (@plan_id,@Semester_code, @sem_credit_hours, @expected_graduation_date, @advisor_id, @student_id) 
+    Set IDENTITY_INSERT Graduation_Plan OFF
+    end
+end
+else
+begin
+    If(@student_acquired >=157)
+    begin
+    insert into Graduation_Plan(semester_code,semester_credit_hours,expected_grad_date,advisor_id,student_id)
+    values (@Semester_code, @sem_credit_hours, @expected_graduation_date, @advisor_id, @student_id) 
+    end
+end
 GO
 
 ---------------------------------------------------------------------
@@ -1016,7 +1033,6 @@ CREATE FUNCTION [FN_StudentViewSlot]
    )
 --------------------------------------------------------------------------------------------------
 ----------Register for first makeup exam {refer to eligibility section (2.4.1) in the description}-------
-
 Go
 Create PROC [Procedures_StudentRegisterFirstMakeup]
 @StudentID int, @courseID int, @studentCurr_sem varchar(40), @result bit output

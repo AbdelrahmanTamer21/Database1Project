@@ -1,51 +1,38 @@
-﻿@{
+﻿@model DatabaseProject.Models.Student
+@{
     ViewBag.Title = "RegisterSecondMakeupForm";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>RegisterFirstMakeup</h2>
+<h2>RegisterSecondMakeup</h2>
 
 
-@using (Html.BeginForm("RegisterSecondMakeUp", "Student", FormMethod.Post)) 
+@using (Html.BeginForm("RegisterSecondMakeup", "Student", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-    
-<div class="form-horizontal">
-    <h4>Student</h4>
-    <hr />
-    <div class="form-group">
-        <label class="control-label col-md-2">Student ID</label>
-        <div class="col-md-10">
-            <input type="number" class="form-control" name="student_id" />
-        </div>
-    </div>
 
-    <div class="form-group">
-        <label class="control-label col-md-2">Course ID</label>
-        <div class="col-md-10">
-            <input type="number" class="form-control" name="course_id" />
+    <div class="form-horizontal">
+        <h4>Student</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group mt-2">
+            <label class="control-label col-md-2">Course ID</label>
+            <div class="col-md-10">
+                @Html.DropDownList("course_id", ViewBag.Courses as SelectList, new { @class = "form-control" })
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <label class="control-label col-md-2">Semester Code</label>
-        <div class="col-md-10">
-            <input type="text" class="form-control" name="studentCurr_sem" />
+        <div class="form-group mt-2">
+            <label class="control-label col-md-2">Semester Code</label>
+            <div class="col-md-10">
+                @Html.DropDownList("studentCurr_sem", ViewBag.Semesters as SelectList, new { @class = "form-control" })
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Create" class="btn btn-default" />
+        <div class="form-group mt-2">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Register" class="btn btn-default btn-primary" />
+            </div>
         </div>
     </div>
-</div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
-
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
