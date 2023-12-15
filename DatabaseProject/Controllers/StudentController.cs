@@ -488,15 +488,15 @@ namespace DatabaseProject.Controllers
 
                 if (Convert.ToBoolean(cmd.Parameters["@result"].Value))
                 {
-                    ViewBag.Message = "You have successfully registered for the first makeup exam.";
+                    TempData["Alert"] = "You have successfully registered for the first makeup exam.";
                 }
                 else
                 {
-                    ViewBag.Message = "You couldn't register for the first makeup exam.";
+                    TempData["Alert"] = "You couldn't register for the first makeup exam.";
                 }
 
                 con.Close();
-                return View();
+                return RedirectToAction("Index");
             }
         }
 
