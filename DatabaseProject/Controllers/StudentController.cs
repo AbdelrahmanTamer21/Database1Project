@@ -208,7 +208,7 @@ namespace DatabaseProject.Controllers
 
             using (con)
             {
-                SqlCommand cmd = new SqlCommand("dbo.Procedures_ViewRequiredCourses", con);
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_ViewMS", con);
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.Add("@StudentID", SqlDbType.Int);
