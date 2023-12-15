@@ -146,6 +146,7 @@ namespace DatabaseProject.Controllers
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.Add("@StudentID", SqlDbType.Int);
+                //cmd.Parameters.Add("@current_semester_code", SqlDbType.Int);
                 cmd.Parameters.Add("@current_semester_code", SqlDbType.Int);
                 cmd.Parameters["@StudentID"].Value = form["student_id"];
                 cmd.Parameters["@current_semester_code"].Value = form["current_semester_code"];
