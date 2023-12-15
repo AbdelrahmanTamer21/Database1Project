@@ -287,6 +287,9 @@
     <Content Include="Views\Student\ChooseInstructor.cshtml" />
     <Content Include="Views\Student\ChooseInstructorForm.cshtml" />
     <Content Include="Views\Student\Index.cshtml" />
+    <Content Include="Views\Student\optionalCourses.cshtml" />
+    <Content Include="Views\Student\availableCourses.cshtml" />
+    <Content Include="Views\Student\requiredCourses.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
