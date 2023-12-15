@@ -453,7 +453,7 @@ namespace DatabaseProject.Controllers
         // Register for first makeup exam. You should show the output response.
         public ActionResult RegisterFirstMakeupForm()
         {
-            ViewBag.Courses = new SelectList(AdvisorController.getCoureNames(), "Value", "Text");
+            ViewBag.Courses = new SelectList(AdvisorController.getCourseIDs(), "Value", "Text");
             ViewBag.Semesters = new SelectList(AdvisorController.getSemesters(), "Value", "Text");
             return View();
         }
