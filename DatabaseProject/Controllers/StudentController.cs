@@ -233,7 +233,7 @@ namespace DatabaseProject.Controllers
 
         }
         /// H
-        public void sendCourceRequest(FormCollection form)
+        public void sendCourseRequest(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
