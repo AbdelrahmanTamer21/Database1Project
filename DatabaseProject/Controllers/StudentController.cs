@@ -480,7 +480,7 @@ namespace DatabaseProject.Controllers
                 // set parameter values
                 cmd.Parameters["@StudentID"].Value = Convert.ToInt32(Session["userID"]);
                 cmd.Parameters["@courseID"].Value = Convert.ToInt32(form["course_id"]);
-                cmd.Parameters["@StudentID"].Value = form["studentCurr_sem"];
+                cmd.Parameters["@studentCurr_sem"].Value = form["studentCurr_sem"];
 
                 // open connection and execute stored procedure
                 con.Open();
