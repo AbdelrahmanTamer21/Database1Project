@@ -290,6 +290,7 @@
     <Content Include="Views\Student\optionalCourses.cshtml" />
     <Content Include="Views\Student\availableCourses.cshtml" />
     <Content Include="Views\Student\requiredCourses.cshtml" />
+    <Content Include="Views\Student\missingCources.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -983,7 +983,7 @@ CREATE FUNCTION [FN_StudentViewGP]
    inner join Course on Course.course_id = GradPlan_Course.course_id
    )
 
-SELECT * FROM FN_StudentViewGP(1)
+--SELECT * FROM FN_StudentViewGP(1)
 --------------------------------------------------------------------
 ---------------------View first upcoming installment deadline --------------------------------------------------
 --Output: deadline date of first upcoming installment
