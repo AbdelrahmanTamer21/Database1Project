@@ -1118,13 +1118,16 @@ END
 ----------Register for second makeup exam {refer to eligibility section (2.4.1) in the description}-------
 Go
 Create PROC [Procedures_StudentRegisterSecondMakeup]
-@StudentID int, @courseID int, @studentCurr_sem varchar(40)
+@StudentID int, @courseID int, @studentCurr_sem varchar(40), @result bit output
 AS
 declare 
 @exam_id int,
 @instructor_id int
 if dbo.FN_StudentCheckSMEligibility(@StudentID, @courseID) = 0
+BEGIN
+SET @result = 0
 Print 'Your are not eligible to take 2nd makeup'
+END
 
 else
 begin
@@ -1136,6 +1139,7 @@ Update Student_Instructor_Course_take
 Set exam_type = 'Second_makeup' , grade= null
 where  student_id = @StudentID and course_id = @courseID and
  semester_code = @studentCurr_sem
+set @result = 1
 end
 Go
 
@@ -1228,12 +1232,12 @@ GO
 Go
 Create PROC [Procedures_Chooseinstructor]
 @StudentID int,
-@instrucorID int,
+@instructorID int,
 @CourseID int,
 @current_semester_code varchar(40)
 AS
 update Student_Instructor_Course_take
-set Student_Instructor_Course_take.instructor_id = @instrucorID
+set Student_Instructor_Course_take.instructor_id = @instructorID
 where Student_Instructor_Course_take.student_id = @StudentID and Student_Instructor_Course_take.course_id = @CourseID 
 and Student_Instructor_Course_take.semester_code = @current_semester_code 
 GO

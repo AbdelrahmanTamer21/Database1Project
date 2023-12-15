@@ -283,6 +283,11 @@
     <Content Include="Views\Advisor\InsertCourseGradPlan.cshtml" />
     <Content Include="Views\Advisor\PendingRequests.cshtml" />
     <Content Include="Views\Advisor\UpdateGradPlan.cshtml" />
+    <Content Include="Views\Student\RegisterSecondMakeupForm.cshtml" />
+    <Content Include="Views\Student\RegisterSecondMakeup.cshtml" />
+    <Content Include="Views\Student\RegisterFirstMakeup.cshtml" />
+    <Content Include="Views\Student\ChooseInstructor.cshtml" />
+    <Content Include="Views\Student\ChooseInstructorForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

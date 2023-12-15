@@ -450,7 +450,6 @@ namespace DatabaseProject.Controllers
 
         // D
         // Register for first makeup exam. You should show the output response.
-        // not working
         public ActionResult RegisterFirstMakeupForm()
         {
             return View();
@@ -473,11 +472,11 @@ namespace DatabaseProject.Controllers
                 cmd.Parameters.Add("@studentCurr_sem", SqlDbType.VarChar, 40);
 
                 // state output variable
-                // cmd.Parameters.Add("@result", SqlDbType.Bit).Direction = ParameterDirection.Output;
+                cmd.Parameters.Add("@result", SqlDbType.Bit).Direction = ParameterDirection.Output;
 
                 // set parameter values
-                cmd.Parameters["@StudentID"].Value = form["student_id"];
-                cmd.Parameters["@courseID"].Value = form["course_id"];
+                cmd.Parameters["@StudentID"].Value = Convert.ToInt32(form["student_id"]);
+                cmd.Parameters["@courseID"].Value = Convert.ToInt32(form["course_id"]);
                 cmd.Parameters["@StudentID"].Value = form["studentCurr_sem"];
 
                 // open connection and execute stored procedure
@@ -500,7 +499,52 @@ namespace DatabaseProject.Controllers
 
         // E
         // Register for second makeup exam. You should show the output response.
+        public ActionResult RegisterSecondMakeupForm()
+        {
+            return View();
+        }
 
+        public ActionResult RegisterSecondMakeup(FormCollection form)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+            using (con)
+            {
+
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_StudentRegisterFirstMakeup", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                // @StudentID int, @courseID int, @studentCurr_sem varchar(40), @result bit OUTPUT
+                // set up the parameters
+                cmd.Parameters.Add("@StudentID", SqlDbType.Int);
+                cmd.Parameters.Add("@courseID", SqlDbType.Int);
+                cmd.Parameters.Add("@studentCurr_sem", SqlDbType.VarChar, 40);
+
+                // state output variable
+                cmd.Parameters.Add("@result", SqlDbType.Bit).Direction = ParameterDirection.Output;
+
+                // set parameter values
+                cmd.Parameters["@StudentID"].Value = Convert.ToInt32(form["student_id"]);
+                cmd.Parameters["@courseID"].Value = Convert.ToInt32(form["course_id"]);
+                cmd.Parameters["@StudentID"].Value = form["studentCurr_sem"];
+
+                // open connection and execute stored procedure
+                con.Open();
+                cmd.ExecuteNonQuery();
+
+                if (Convert.ToBoolean(cmd.Parameters["@result"].Value))
+                {
+                    ViewBag.Message = "You have successfully registered for the second makeup exam.";
+                }
+                else
+                {
+                    ViewBag.Message = "You couldn't register for the second makeup exam.";
+                }
+
+                con.Close();
+                return View();
+            }
+        }
         // F
         // View all courses along with their corresponding slots details and instructors.
         public ActionResult AllCoursesSlots()
@@ -515,7 +559,7 @@ namespace DatabaseProject.Controllers
                 con.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
 
-                List<Course_Slot_Instructor> courses = new List<Course_Slot_Instructor>();
+                List<Course_Slot_Instructor> courses_slot_instructor = new List<Course_Slot_Instructor>();
 
                 while (rdr.Read())
                 {
@@ -541,12 +585,12 @@ namespace DatabaseProject.Controllers
                     course_Slot.slot = slot;
                     course_Slot.instructor = instructor;
 
-                    courses.Add(course_Slot);
+                    courses_slot_instructor.Add(course_Slot);
                 }
                 rdr.Close();
                 con.Close();
 
-                return View(courses);
+                return View(courses_slot_instructor);
             }
         }
 
@@ -606,13 +650,17 @@ namespace DatabaseProject.Controllers
 
         // H
         // Choose the instructor for a certain course
+        public ActionResult ChooseInstructorForm()
+        {
+            return View();
+        }
         public ActionResult ChooseInstructor(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
 
             using (con)
             {
-                SqlCommand cmd = new SqlCommand("dbo.Procedures_StudentChooseInstructor", con);
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_Chooseinstructor", con);
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 // @StudentID int, @courseID int, @instructorID int, @result bit OUTPUT
@@ -624,16 +672,16 @@ namespace DatabaseProject.Controllers
 
 
                 // set parameter values
-                cmd.Parameters["@StudentID"].Value = form["student_id"];
-                cmd.Parameters["@courseID"].Value = form["course_id"];
-                cmd.Parameters["@instructorID"].Value = form["instructor_id"];
+                cmd.Parameters["@StudentID"].Value = Convert.ToInt32(form["student_id"]);
+                cmd.Parameters["@courseID"].Value = Convert.ToInt32(form["course_id"]);
+                cmd.Parameters["@instructorID"].Value = Convert.ToInt32(form["instructor_id"]);
                 cmd.Parameters["@current_semester_code"].Value = form["current_semester_code"];
 
                 // open connection and execute stored procedure
                 con.Open();
                 cmd.ExecuteNonQuery();
 
-                Response.Write("You have successfully chosen the instructor for the course.");
+                ViewBag.Message = "You have successfully chosen the instructor for the course.";
 
                 con.Close();
                 return View();

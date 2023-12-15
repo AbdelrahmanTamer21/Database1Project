@@ -1,15 +1,16 @@
-﻿@{
-    ViewBag.Title = "RegisterFirstMakeupForm";
+﻿
+@{
+    ViewBag.Title = "ChooseInstructorForm";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Register First Makeup Form</h2>
+<h2>Choose Instructor Form</h2>
 
 
-@using (Html.BeginForm("RegisterFirstMakeUp", "Student", FormMethod.Post)) 
+@using (Html.BeginForm("ChooseInstructor", "Student", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-    
+
 <div class="form-horizontal">
     <h4>Student</h4>
     <hr />
@@ -28,9 +29,16 @@
     </div>
 
     <div class="form-group">
-        <label class="control-label col-md-2">Semester Code</label>
+        <label class="control-label col-md-2">Instructor ID</label>
         <div class="col-md-10">
-            <input type="text" class="form-control" name="studentCurr_sem" />
+            <input type="text" class="form-control" name="instructor_id" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-md-2">Current Semester Code</label>
+        <div class="col-md-10">
+            <input type="text" class="form-control" name="current_semester_code" />
         </div>
     </div>
 
@@ -49,3 +57,5 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+
+

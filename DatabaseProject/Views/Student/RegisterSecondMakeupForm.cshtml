@@ -1,12 +1,12 @@
 ﻿@{
-    ViewBag.Title = "RegisterFirstMakeupForm";
+    ViewBag.Title = "RegisterSecondMakeupForm";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Register First Makeup Form</h2>
+<h2>RegisterFirstMakeup</h2>
 
 
-@using (Html.BeginForm("RegisterFirstMakeUp", "Student", FormMethod.Post)) 
+@using (Html.BeginForm("RegisterSecondMakeUp", "Student", FormMethod.Post)) 
 {
     @Html.AntiForgeryToken()
     
