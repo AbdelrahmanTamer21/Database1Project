@@ -275,7 +275,7 @@
     <Content Include="Views\Advisor\AssignedStudentsCourses.cshtml" />
     <Content Include="Views\Student\UpcomingInstallments.cshtml" />
     <Content Include="Views\Student\AllCoursesExams.cshtml" />
-    <Content Include="Views\Student\RegisterFirstMakeup.cshtml" />
+    <Content Include="Views\Student\RegisterFirstMakeupForm.cshtml" />
     <Content Include="Views\Student\AllCoursesSlots.cshtml" />
     <Content Include="Views\Student\ViewSlots.cshtml" />
     <Content Include="Views\Student\AllCoursesPrerequisites.cshtml" />
@@ -283,6 +283,11 @@
     <Content Include="Views\Advisor\InsertCourseGradPlan.cshtml" />
     <Content Include="Views\Advisor\PendingRequests.cshtml" />
     <Content Include="Views\Advisor\UpdateGradPlan.cshtml" />
+    <Content Include="Views\Student\RegisterSecondMakeupForm.cshtml" />
+    <Content Include="Views\Student\RegisterSecondMakeup.cshtml" />
+    <Content Include="Views\Student\RegisterFirstMakeup.cshtml" />
+    <Content Include="Views\Student\ChooseInstructor.cshtml" />
+    <Content Include="Views\Student\ChooseInstructorForm.cshtml" />
     <Content Include="Views\Student\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>

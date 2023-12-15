@@ -29,10 +29,10 @@
         <td>
             @Html.DisplayFor(modelItem => item.name)
         </td>
-        @foreach (var course_prop in item.course)
+        @foreach (var course_prop in item.course.GetType().GetProperties())
         {
             <td>
-                @Html.DisplayFor(modelItem => course_prop.name)
+                @Html.DisplayFor(modelItem => course_prop.GetValue(item, null))
             </td>
         }
     </tr>
