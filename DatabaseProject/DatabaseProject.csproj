@@ -291,6 +291,7 @@
     <Content Include="Views\Student\availableCourses.cshtml" />
     <Content Include="Views\Student\requiredCourses.cshtml" />
     <Content Include="Views\Student\missingCources.cshtml" />
+    <Content Include="Views\Student\addStudentPhone.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
