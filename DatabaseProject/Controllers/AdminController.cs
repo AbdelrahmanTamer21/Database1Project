@@ -376,12 +376,12 @@ namespace DatabaseProject.Controllers
 
                     }
                     con.Close();
-                    string view = "SELECT * FROM Semster_offered_Courses";
+                    /*string view = "SELECT * FROM Semster_offered_Courses";
                     SqlDataAdapter views = new SqlDataAdapter(view, con);
                     DataTable dataTable = new DataTable();
                     views.Fill(dataTable);
                     //  YourGridView.DataSource = dataTable;
-                    //  YourGridView.DataBind();
+                    //  YourGridView.DataBind();*/
                 }
             }
         }
@@ -406,12 +406,12 @@ namespace DatabaseProject.Controllers
                     {
 
                         con.Close();
-                        string view = "SELECT * FROM Semster_offered_Courses";
+                      /*  string view = "SELECT * FROM Semster_offered_Courses";
                         SqlDataAdapter views = new SqlDataAdapter(view, con);
                         DataTable dataTable = new DataTable();
                         views.Fill(dataTable);
                         //  YourGridView.DataSource = dataTable;
-                        //  YourGridView.DataBind();
+                        //  YourGridView.DataBind();*/
                     }
                 }
             }
@@ -433,6 +433,32 @@ namespace DatabaseProject.Controllers
 
                     //set parameter values
                     cmd.Parameters["@courseID"].Value = form["course_id"];
+
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    con.Close();
+                }
+            }
+        }
+        public void deleteSlots(FormCollection form)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdminDeleteSlots", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                using (cmd)
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    //set up the parameters
+                    cmd.Parameters.Add("@current_semester", SqlDbType.Int);
+
+                    //set parameter values
+                    cmd.Parameters["@current_semester"].Value = form["semester_code"];
 
 
                     //open connection and execute stored procedure
@@ -474,6 +500,326 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
+        public ActionResult AllPaymentsWithCorrStudents()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Student_Payment", con);
+                cmd.CommandType = CommandType.Text;
+
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+
+                List<Student_Payment> StudentPayments = new List<Student_Payment>();
+
+                while (rdr.Read())
+                {
+                    Student student = new Student();
+                    student.student_id = Convert.ToInt32(rdr["StudentID"]);
+                    student.f_name = rdr["f_name"].ToString();
+                    student.l_name = rdr["l_name"].ToString();
+                    Payment payment = new Payment();
+                    Payment.payment_id = Convert.ToInt32(rdr["payment_id"]);
+                    Payment.amount = Convert.ToInt32(rdr["amount"]);
+                    // datetime?   Payment.startdate = rdr["startdate"].ToString();
+                    // datetime?   Payment.deadline = rdr["deadline"].ToString();
+                    Payment.n_installments = Convert.ToInt32(rdr["n_installments"]);
+                    Payment.fund_percentage = Convert.ToDecimal(rdr["fund_percentage"]);
+                    Payment.status = rdr["status"].ToString();
+
+
+
+
+                    Student_Payment student_payment = new Student_Payment();
+                    student_payment.student = student;
+                    student_payment.payment = payment;
+
+
+                    StudentPayments.Add(student_payment);
+                }
+                rdr.Close();
+                con.Close();
+
+                return View(StudentPayments);
+            }
+        }
+        public void issueInstallments(FormCollection form)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdminIssueInstallment", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                using (cmd)
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    //set up the parameters
+                    cmd.Parameters.Add("@payment_id", SqlDbType.Int);
+
+                    //set parameter values
+                    cmd.Parameters["@payment_id"].Value = form["payment_id"];
+
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    con.Close();
+                }
+            }
+        }
+        public void updateStudentStatus(FormCollection form)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("dbo.Procedure_AdminUpdateStudentStatus", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                using (cmd)
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    //set up the parameters
+                    cmd.Parameters.Add("@student_id", SqlDbType.Int);
+
+                    //set parameter values
+                    cmd.Parameters["@student_id"].Value = form["student_id"];
+
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+                    con.Close();
+                }
+            }
+        }
+        public ActionResult AllActiveStudent()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM view_Students", con);
+                cmd.CommandType = CommandType.Text;
+
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+
+                List<Student> students = new List<Student>();
+
+                while (rdr.Read())
+                {
+                    Student student = new Student();
+                    student.student_id = Convert.ToInt32(rdr["student_id"]);
+                    student.f_name = rdr["f_name"].ToString();
+                    student.l_name = rdr["l_name"].ToString();
+                    student.password = rdr["password"].ToString();
+                    student.gpa = Convert.ToDecimal(rdr["gpa"]);
+                    student.faculty = rdr["faculty"].ToString();
+                    student.email = rdr["email"].ToString();
+                    student.major = rdr["major"].ToString();
+                    student.financial_status = Convert.ToBoolean(rdr["financial_status"]);
+                    student.semester = Convert.ToInt32(rdr["semester"]);
+                    student.acquired_hours = Convert.ToInt32(rdr["acquired_hours"]);
+                    student.assigned_hours = Convert.ToInt32(rdr["assigned_hours"]);
+                    student.advisor = new Advisor();
+                    student.advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
+
+
+                    students.Add(student);
+                }
+                rdr.Close();
+                con.Close();
+
+                return View(students);
+            }
+        }
+        /*  public ActionResult gradPlansWithInitAdvisors()
+          {
+              SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+              using (con)
+              {
+                  SqlCommand cmd = new SqlCommand("SELECT * FROM Advisors_Graduation_Plan", con);
+                  cmd.CommandType = CommandType.Text;
+
+                  con.Open();
+                  SqlDataReader rdr = cmd.ExecuteReader();
+
+                  List<Advisors_Graduation_Plan> AdvGradPlan = new List<Advisors_Graduation_Plan>();
+
+                  while (rdr.Read())
+                  {
+                      GraduationPlan plan = new GraduationPlan();
+                      plan.plan_id = Convert.ToInt32(rdr["plan_id"]);
+                      Advisor advisor = new Advisor();
+                      advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
+                      advisor.name = rdr["advisor_name"].ToString();
+
+                      Advisors_Graduation_Plan advisor_grad_plan = new Advisors_Graduation_Plan();
+                      advisor_grad_plan.graduation_plan = plan;
+                      advisor_grad_plan.advisor = advisor;
+
+
+                      courses.Add(advisor_grad_plan);
+                  }
+                  rdr.Close();
+                  con.Close();
+
+                  return View(AdvGradPlan);
+              }
+          }*/
+        /* public ActionResult AllStudentsTranscript()
+         {
+             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+             using (con)
+             {
+                 SqlCommand cmd = new SqlCommand("SELECT * FROM Students_Courses_transcript", con);
+                 cmd.CommandType = CommandType.Text;
+
+                 con.Open();
+                 SqlDataReader rdr = cmd.ExecuteReader();
+
+                 List<Students_Courses_transcript> transcript = new List<Students_Courses_transcript>();
+                 while (rdr.Read())
+                 {
+                     Student student = new Student();
+                     student.student_id = Convert.ToInt32(rdr["student_id"]);
+                     student.f_name = rdr["f_name"].ToString();
+                     student.l_name = rdr["l_name"].ToString();
+
+                     Course course = new Course();
+                     course.name = rdr["name"].ToString();
+
+                     /*  not sure     
+                                 Student_Instructor_Course_take take = new Student_Instructor_Course_take();
+                                 take.course_id = Convert.ToInt32(rdr["course_id"]);
+                                 take.exam_type = rdr["exam_type"].ToString();
+                                 take.grade = rdr["grade"].ToString();
+                                 take.semester_code = rdr["semester_code"].ToString(); 
+                     */
+
+        /*      Students_Courses_transcript studentCourseTranscript = new Students_Courses_transcript();
+              studentCourseTranscript.student = student;
+              studentCourseTranscript.course = course;
+              studentCourseTranscript.student_Instructor_Course_take = take;
+
+              transcript.Add(studentCourseTranscript);
+          }
+          rdr.Close();
+          con.Close();
+
+          return View(transcript);
+      }
+  }*/
+        /*    public ActionResult AllSemestersWithOfferedCourses()
+            {
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+                using (con)
+                {
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM Semster_offered_Courses", con);
+                    cmd.CommandType = CommandType.Text;
+
+                    con.Open();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+                    List<Semster_offered_Courses> SemCourses = new List<Semster_offered_Courses>();
+                    while (rdr.Read())
+                    {
+                        Course course = new Course();
+                        course.course_id = Convert.ToInt32(rdr["course_id"]);
+                        course.name = rdr["name"].ToString();
+
+                        Semester semester = new Semester();
+                        semester.semester_code = rdr["semester_code"].ToString();
+
+
+                        Semster_offered_Courses soc = new Semster_offered_Courses();
+                        soc.course = course;
+                        soc.semester = semester;
+
+
+                        SemCourses.Add(soc);
+                    }
+                    rdr.Close();
+                    con.Close();
+
+                    return View(SemCourses);
+                }
+                ﻿namespace DatabaseProject.Models
+        {
+            public class Semster_offered_Courses
+            {
+
+                public Course course { get; set; }
+                public Semester semester { get; set; }
+
+
+                public Semster_offered_Courses() { }
+
+                public Semster_offered_Courses(Course course , Semester semester)
+                {
+                    this.course = course;
+                    this.semester = semester;
+                }
+            }
+        }
+        ﻿namespace DatabaseProject.Models
+	{
+		public class Students_Courses_transcript
+		{
+		
+       
+			public Student student { get; set; }
+			public Course course { get; set; }
+			public Student_Instructor_Course_take student_Instructor_Course_take { get; set; }
+			
+
+			public Students_Courses_transcript() { }
+
+			public Students_Courses_transcript(Student student ,Course course , Student_Instructor_Course_take student_Instructor_Course_take)
+			{
+				this.student = student;
+				this.course = course;
+				this.student_Instructor_Course_take = student_Instructor_Course_take ;
+				
+			}
+		}
+	}
+        //lesa mt3mlsh hshoof lw hzwed take.course.course_id f (i)
+	﻿namespace DatabaseProject.Models
+	{
+		public class Student_Instructor_Course_take
+		{
+		
+       
+			public Student student { get; set; }
+			public Course course { get; set; }
+			public Student_Instructor_Course_take student_Instructor_Course_take { get; set; }
+			
+
+			public Student_Instructor_Course_take() { }
+
+			public Student_Instructor_Course_take(Student student ,Course course , Student_Instructor_Course_take student_Instructor_Course_take)
+			{
+				this.student = student;
+				this.course = course;
+				this.student_Instructor_Course_take = student_Instructor_Course_take ;
+				
+			}
+		}
+	}
+
+        */
+
+
+
     }
 }
 
