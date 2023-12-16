@@ -11,6 +11,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using System.Web.Routing;
 using System.Web.UI.WebControls;
 using System.Xml.Linq;
 
@@ -18,6 +19,19 @@ namespace DatabaseProject.Controllers
 {
     public class AdminController : Controller
     {
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            string actionName = filterContext.ActionDescriptor.ActionName;
+            HttpSessionStateBase session = filterContext.HttpContext.Session;
+            if (session != null && session["userID"] == null && actionName != "Login" && actionName != "loginAdmin")
+            {
+                filterContext.Result = new RedirectToRouteResult(
+                    new RouteValueDictionary {
+                                { "Controller", "Admin" },
+                                { "Action", "Login" }
+                                });
+            }
+        }
         // GET: Admin
         public ActionResult Index()
         {
@@ -713,7 +727,7 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
-        public void updateStudentStatus(FormCollection form)
+        public ActionResult updateStudentStatus(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -736,8 +750,13 @@ namespace DatabaseProject.Controllers
                     cmd.ExecuteNonQuery();
 
                     con.Close();
+                    return RedirectToAction("Index");
                 }
             }
+        }
+        public ActionResult studentStatus()
+        {
+            return View();
         }
         public ActionResult AllActiveStudent()
         {
