@@ -80,12 +80,12 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
-        private List<Student> listAllStudent()
+        public ActionResult listAllStudent()
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
             {
-                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdminListStudents", con);
+                SqlCommand cmd = new SqlCommand("dbo.AdminListStudentsWithAdvisors", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 List<Student> lstStudent = new List<Student>();
                 using (cmd)
@@ -104,27 +104,20 @@ namespace DatabaseProject.Controllers
                             student.student_id = Convert.ToInt32(rdr["student_id"]);
                             student.f_name = rdr["f_name"].ToString();
                             student.l_name = rdr["l_name"].ToString();
-                            student.password = rdr["password"].ToString();
-                            student.gpa = Convert.ToDecimal(rdr["gpa"]);
-                            student.faculty = rdr["faculty"].ToString();
-                            student.email = rdr["email"].ToString();
-                            student.major = rdr["major"].ToString();
-                            student.financial_status = Convert.ToBoolean(rdr["financial_status"]);
-                            student.semester = Convert.ToInt16(rdr["semester"]);
-                            student.acquired_hours = Convert.ToInt16(rdr["acquired_hours"]);
-                            student.assigned_hours = Convert.ToInt16(rdr["assigned_hours"]);
+                         
                             student.advisor = new Advisor();
                             student.advisor.advisor_id = Convert.ToInt16(rdr["advisor_id"]);
+                            student.advisor.name = rdr["Advisor"].ToString();
                             lstStudent.Add(student);
                         }
                     }
                     con.Close();
-                    return lstStudent;
+                    return view(lstStudent);
                 }
             }
         }
 
-        public List<Request> AdminListPendingRequests()
+        public ActionResult AdminListPendingRequests()
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -169,7 +162,7 @@ namespace DatabaseProject.Controllers
                         }
                     }
                     con.Close();
-                    return lstRequest;
+                    return View(lstRequest);
                 }
             }
         }
@@ -209,6 +202,10 @@ namespace DatabaseProject.Controllers
             }
 
 
+        }
+        public ActionResult AddCourseForm()
+        {
+            return View();
         }
         private ActionResult AddCourse(FormCollection form)
         {
@@ -346,7 +343,11 @@ namespace DatabaseProject.Controllers
 
 
         }
-        private void AdminLinkStudentToAdvisor(FormCollection form)
+        public ActionResult AdminLinkStudentToAdvisorForm()
+        {
+            return View();
+        }
+        public ActionResult AdminLinkStudentToAdvisor(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -378,7 +379,11 @@ namespace DatabaseProject.Controllers
             }
 
         }
-        private void student_course_instructor(FormCollection form)
+        public ActionResult student_course_instructorForm()
+        {
+            return View();
+        }
+        public ActionResult student_course_instructor(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -484,30 +489,47 @@ namespace DatabaseProject.Controllers
             {
                 SqlCommand cmd = new SqlCommand("SELECT* FROM Semster_offered_Courses", con);
                 cmd.CommandType = CommandType.Text;
-                // List<Course> lstCourse = new List<Course>();
+                List<Semester> semesters = new List<Semester>();
                 using (cmd)
                 {
-                    //set up parameteres
-                    //cmd.Parameters.AddWithValue("@Advisor_ID", advisor_id);
-
-                    //open connection and execute stored procedure
-                    con.Open();
-                    cmd.ExecuteNonQuery();
-
-                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    Semester semester = new Semester();
+                    semester.courses = new List<Course>();
+                    if (rdr.Read())
                     {
-
-                        con.Close();
-                        /*  string view = "SELECT * FROM Semster_offered_Courses";
-                          SqlDataAdapter views = new SqlDataAdapter(view, con);
-                          DataTable dataTable = new DataTable();
-                          views.Fill(dataTable);
-                          //  YourGridView.DataSource = dataTable;
-                          //  YourGridView.DataBind();*/
+                        semester.semester_code = rdr["semester_code"].ToString();
+                      
+                        Course course = new Course();
+                        course.course_id = Convert.ToInt32(rdr["course_id"]);
+                        course.name = rdr["Course"].ToString();
+                        semester.courses.Add(course);
                     }
-                    return View();
+                    else
+                    {
+                        con.Close();
+                        semesters.Add(semester);
+                        return View(semesters);
+                    }
+                    while (rdr.Read())
+                    {
+                        if (rdr["semester_code"].ToString() != semester.semester_code)
+                        {
+                            semesters.Add(semester);
+                            semester = new Semester();
+                            semester.semester_code = rdr["semester_code"].ToString();
+                            semester.courses = new List<Course>();
+                        }
+                        Course course = new Course();
+                        course.course_id = Convert.ToInt32(rdr["course_id"]);
+                        course.name = rdr["Course"].ToString();
+                        semester.courses.Add(course);
+                    }
+                    semesters.Add(semester);
+
                 }
-            }
+                con.Close();
+                return View(semesters);
+            
+        }
         }
 
         public void deleteCourse(FormCollection form)
