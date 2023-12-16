@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using System.Windows.Forms;
 using FormCollection = System.Web.Mvc.FormCollection;
 
@@ -12,6 +14,19 @@ namespace DatabaseProject.Controllers
 {
     public class AdvisorController : Controller
     {
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            string actionName = filterContext.ActionDescriptor.ActionName;
+            HttpSessionStateBase session = filterContext.HttpContext.Session;
+            if (session != null && session["userID"] == null && actionName != "Login" && actionName != "loginAdvisor")
+            {
+                filterContext.Result = new RedirectToRouteResult(
+                    new RouteValueDictionary {
+                                { "Controller", "Advisor" },
+                                { "Action", "Login" }
+                                });
+            }
+        }
         // GET: Advisor
         public ActionResult Index()
         {

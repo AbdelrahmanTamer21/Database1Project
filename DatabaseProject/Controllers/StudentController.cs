@@ -7,11 +7,26 @@ using System.Data;
 using System.Web.Mvc;
 using System.Drawing;
 using System.Diagnostics;
+using System.Web.Routing;
+using System.Web;
 
 namespace DatabaseProject.Controllers
 {
     public class StudentController : Controller
     {
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            string actionName = filterContext.ActionDescriptor.ActionName;
+            HttpSessionStateBase session = filterContext.HttpContext.Session;
+            if (session != null && session["userID"] == null && actionName != "Login" && actionName != "loginStudent")
+            {
+                filterContext.Result = new RedirectToRouteResult(
+                    new RouteValueDictionary {
+                                { "Controller", "Student" },
+                                { "Action", "Login" }
+                                });
+            }
+        }
         // GET: Student
         public ActionResult Index()
         {
