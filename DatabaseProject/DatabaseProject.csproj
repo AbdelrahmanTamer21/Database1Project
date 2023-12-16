@@ -314,6 +314,7 @@
     <Content Include="Views\Student\missingCourses.cshtml" />
     <Content Include="Views\Admin\AllActiveStudent.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Admin\AllSemestersWithOfferedCourses.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

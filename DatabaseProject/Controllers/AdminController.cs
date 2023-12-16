@@ -846,106 +846,58 @@ namespace DatabaseProject.Controllers
                 return View(lstTranscript);
             }
         }
-        /*    public ActionResult AllSemestersWithOfferedCourses()
+        public ActionResult AllSemestersWithOfferedCourses()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+
+            using (con)
             {
-                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Semster_offered_Courses", con);
+                cmd.CommandType = CommandType.Text;
 
-                using (con)
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+
+                List<Semester> SemCourses = new List<Semester>();
+                Semester semester = new Semester();
+                semester.courses = new List<Course>();
+                if (rdr.Read())
                 {
-                    SqlCommand cmd = new SqlCommand("SELECT * FROM Semster_offered_Courses", con);
-                    cmd.CommandType = CommandType.Text;
-
-                    con.Open();
-                    SqlDataReader rdr = cmd.ExecuteReader();
-
-                    List<Semster_offered_Courses> SemCourses = new List<Semster_offered_Courses>();
+                    semester.semester_code = rdr["semester_code"].ToString();
+                    Course course = new Course();
+                    course.course_id = Convert.ToInt32(rdr["course_id"]);
+                    course.name = rdr["name"].ToString();
+                    semester.courses.Add(course);
                     while (rdr.Read())
                     {
-                        Course course = new Course();
+
+                        if (rdr["semester_code"] != semester.semester_code)
+                        {
+                            SemCourses.Add(semester);
+                            semester = new Semester();
+                            semester.courses = new List<Course>();
+                            semester.semester_code = rdr["semester_code"].ToString();
+                        }
+                        course = new Course();
                         course.course_id = Convert.ToInt32(rdr["course_id"]);
                         course.name = rdr["name"].ToString();
-
-                        Semester semester = new Semester();
-                        semester.semester_code = rdr["semester_code"].ToString();
-
-
-                        Semster_offered_Courses soc = new Semster_offered_Courses();
-                        soc.course = course;
-                        soc.semester = semester;
-
-
-                        SemCourses.Add(soc);
+                        semester.courses.Add(course);
                     }
-                    rdr.Close();
+                    SemCourses.Add(semester);
+                }
+                else
+                {
                     con.Close();
-
+                    SemCourses.Add(semester);
                     return View(SemCourses);
                 }
-                ﻿namespace DatabaseProject.Models
-        {
-            public class Semster_offered_Courses
-            {
+                
+                rdr.Close();
+                con.Close();
 
-                public Course course { get; set; }
-                public Semester semester { get; set; }
-
-
-                public Semster_offered_Courses() { }
-
-                public Semster_offered_Courses(Course course , Semester semester)
-                {
-                    this.course = course;
-                    this.semester = semester;
-                }
+                return View(SemCourses);
             }
         }
-        ﻿namespace DatabaseProject.Models
-	{
-		public class Students_Courses_transcript
-		{
-		
-       
-			public Student student { get; set; }
-			public Course course { get; set; }
-			public Student_Instructor_Course_take student_Instructor_Course_take { get; set; }
-			
-
-			public Students_Courses_transcript() { }
-
-			public Students_Courses_transcript(Student student ,Course course , Student_Instructor_Course_take student_Instructor_Course_take)
-			{
-				this.student = student;
-				this.course = course;
-				this.student_Instructor_Course_take = student_Instructor_Course_take ;
-				
-			}
-		}
-	}
-        //lesa mt3mlsh hshoof lw hzwed take.course.course_id f (i)
-	﻿namespace DatabaseProject.Models
-	{
-		public class Student_Instructor_Course_take
-		{
-		
-       
-			public Student student { get; set; }
-			public Course course { get; set; }
-			public Student_Instructor_Course_take student_Instructor_Course_take { get; set; }
-			
-
-			public Student_Instructor_Course_take() { }
-
-			public Student_Instructor_Course_take(Student student ,Course course , Student_Instructor_Course_take student_Instructor_Course_take)
-			{
-				this.student = student;
-				this.course = course;
-				this.student_Instructor_Course_take = student_Instructor_Course_take ;
-				
-			}
-		}
-	}
-
-        */
 
 
 

@@ -11,6 +11,7 @@ namespace DatabaseProject.Models
         public string semester_code { get; set; }
         public DateTime start_date { get; set; }
         public DateTime end_date { get; set; }
+        public List<Course> courses { get; set; }
 
 
         public Semester() { }
