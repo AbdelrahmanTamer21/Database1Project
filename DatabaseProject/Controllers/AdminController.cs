@@ -170,7 +170,10 @@ namespace DatabaseProject.Controllers
                             request.student = new Student();
                             request.student.student_id = Convert.ToInt32(rdr["student_id"]);
                             request.advisor = new Advisor();
-                            request.advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
+                            if (rdr["advisor_id"] != DBNull.Value)
+                            {
+                                request.advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
+                            }
                             lstRequest.Add(request);
                         }
                     }
@@ -702,7 +705,7 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
-        public void issueInstallments(FormCollection form)
+        public ActionResult issueInstallments(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -719,12 +722,20 @@ namespace DatabaseProject.Controllers
                     //set parameter values
                     cmd.Parameters["@payment_id"].Value = form["payment_id"];
 
+                    try
+                    {
+                        //open connection and execute stored procedure
+                        con.Open();
+                        cmd.ExecuteNonQuery();
 
-                    //open connection and execute stored procedure
-                    con.Open();
-                    cmd.ExecuteNonQuery();
+                        con.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        TempData["Alert"] = ex.Message;
+                    }
+                    return RedirectToAction("Index");
 
-                    con.Close();
                 }
             }
         }

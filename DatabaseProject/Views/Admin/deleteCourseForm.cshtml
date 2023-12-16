@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewBag.Title = "deleteCourseForm";
+}
+
+<h2>deleteCourseForm</h2>
+
+
+@using (Html.BeginForm("deleteCourse", "Admin", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Delete Course</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+        <div class="form-group row mt-3">
+            <div class="col-3">
+                <label class="control-label" for="course_id"> Course ID </label>
+            </div>
+            <div class="col-md-8">
+                @Html.DropDownList("course_id", ViewBag.Courses as SelectList, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Delete" class="btn btn-danger" />
+            </div>
+        </div>
+
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+
+</div>
+
+

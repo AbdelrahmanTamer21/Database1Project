@@ -1,0 +1,94 @@
+﻿@model IEnumerable<DatabaseProject.Models.Student>
+
+@{
+    ViewBag.Title = "AllPaymentsWithCorrStudents";
+}
+
+<h2>AllPaymentsWithCorrStudents</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.student_id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.f_name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.l_name)
+        </th>
+        <th>
+            payment_id
+        </th>
+        <th>
+            amount
+        </th>
+        <th>
+            start_date
+        </th>
+        <th>
+            deadline
+        </th>
+        <th>
+            n_installments
+        </th>
+        <th>
+            fund_percentage
+        </th>
+        <th>
+            status
+        </th>
+        <th>
+            semester_code
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        foreach (var payment in item.payments)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.student_id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.f_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.l_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => payment.payment_id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => payment.amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => payment.startdate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => payment.deadline)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => payment.n_installments)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => payment.fund_percentage)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => payment.status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => payment.semester.semester_code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.assigned_hours)
+                </td>
+            </tr>
+        }
+    }
+
+</table>
