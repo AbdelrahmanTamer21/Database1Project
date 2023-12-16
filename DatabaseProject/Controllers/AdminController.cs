@@ -713,6 +713,10 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
+        public ActionResult updateStudentStatusForm()
+        {
+            return View();
+        }
         public void updateStudentStatus(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
