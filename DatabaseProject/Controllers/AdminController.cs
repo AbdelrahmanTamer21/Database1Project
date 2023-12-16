@@ -396,9 +396,11 @@ namespace DatabaseProject.Controllers
                         {
                             if (Convert.ToInt32(rdr["instructor_id"]) != instructor.instructor_id)
                             {
+                                instructors.Add(instructor);
                                 instructor = new Instructor();
                                 instructor.instructor_id = Convert.ToInt32(rdr["instructor_id"]);
                                 instructor.name = rdr["Instructor"].ToString();
+                                instructor.courses = new List<Course>();
                             }
                             Course course = new Course();
                             course.course_id = Convert.ToInt32(rdr["course_id"]);
