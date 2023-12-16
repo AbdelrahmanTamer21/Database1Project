@@ -288,7 +288,7 @@ namespace DatabaseProject.Controllers
 
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
 
-            using (con)
+            using (con) 
             {
                 SqlCommand cmd = new SqlCommand("dbo.Procedures_ViewMS", con);
                 cmd.CommandType = CommandType.Text;
