@@ -119,7 +119,7 @@ namespace DatabaseProject.Controllers
                             rdr.Close();
                             con.Close();
 
-                            Session["userID"] = form["advisor_id"];
+                            Session["userID"] = form["student_id"];
                             Session["type"] = "Advisor";
 
                             TempData["Alert"] = "Login successful";
@@ -163,12 +163,6 @@ namespace DatabaseProject.Controllers
             }
         }
         /// D
-        public ActionResult optionalCoursesForm()
-        {
-            ViewBag.Semesters = new SelectList(AdvisorController.getSemesters(), "Value", "Text");
-            return View();
-        }
-
         public ActionResult optionalCourses(FormCollection form)
         {
 
@@ -179,10 +173,6 @@ namespace DatabaseProject.Controllers
                 SqlCommand cmd = new SqlCommand("dbo.Procedures_ViewOptionalCourse", con);
                 cmd.CommandType = CommandType.StoredProcedure;
 
-                //cmd.Parameters.Add("@StudentID", SqlDbType.Int);
-                //cmd.Parameters.Add("@current_semester_code", SqlDbType.Int);
-                //cmd.Parameters["@StudentID"].Value = form["student_id"];
-                //cmd.Parameters["@current_semester_code"].Value = form["semester_code"];
                 cmd.Parameters.AddWithValue("@StudentID", Session["userID"]);
                 cmd.Parameters.AddWithValue("@current_semester_code", form["semester_code"]);
 
@@ -202,6 +192,13 @@ namespace DatabaseProject.Controllers
             }
 
         }
+
+        public ActionResult optionalCoursesForm()
+        {
+            ViewBag.Semesters = new SelectList(AdvisorController.getSemesters(), "Value", "Text");
+            return View();
+        }
+
         /// E
         public ActionResult availableCourses(FormCollection form)
         {
@@ -213,12 +210,10 @@ namespace DatabaseProject.Controllers
                 SqlCommand cmd = new SqlCommand("SELECT * FROM dbo.FN_SemsterAvailableCourses(@semstercode)", con);
                 cmd.CommandType = CommandType.Text;
 
-                cmd.Parameters.Add("@StudentID", SqlDbType.Int);
                 //cmd.Parameters.Add("@current_semester_code", SqlDbType.Int);
-                cmd.Parameters.Add("@current_semester_code", SqlDbType.Int);
-                cmd.Parameters["@StudentID"].Value = form["student_id"];
-                cmd.Parameters["@current_semester_code"].Value = form["current_semester_code"];
-
+                //cmd.Parameters.Add("@semstercode", SqlDbType.VarChar,40);
+                //cmd.Parameters["@semstercode"].Value = form["semester_code"];
+                cmd.Parameters.AddWithValue("@semstercode", form["semester_code"]);
                 List<Course> courses = new List<Course>();
 
                 con.Open();
@@ -235,6 +230,11 @@ namespace DatabaseProject.Controllers
                 return View(courses);
             }
 
+        }
+        public ActionResult availableCoursesForm()
+        {
+            ViewBag.Semesters = new SelectList(AdvisorController.getSemesters(), "Value", "Text");
+            return View();
         }
         /// F
         public ActionResult requiredCourses(FormCollection form)
@@ -247,10 +247,12 @@ namespace DatabaseProject.Controllers
                 SqlCommand cmd = new SqlCommand("dbo.Procedures_ViewRequiredCourses", con);
                 cmd.CommandType = CommandType.Text;
 
-                cmd.Parameters.Add("@current_semester_code", SqlDbType.Int);
-                cmd.Parameters.Add("@StudentID", SqlDbType.Int);
-                cmd.Parameters["@current_semester_code"].Value = form["current_semester_code"];
-                cmd.Parameters["@StudentID"].Value = form["student_id"];
+                //cmd.Parameters.Add("@current_semester_code", SqlDbType.Int);
+                //cmd.Parameters.Add("@StudentID", SqlDbType.Int);
+                //cmd.Parameters["@current_semester_code"].Value = form["current_semester_code"];
+                //cmd.Parameters["@StudentID"].Value = form["student_id"];
+                cmd.Parameters.AddWithValue("@StudentID", Session["userID"]);
+                cmd.Parameters.AddWithValue("@current_semester_code", form["semester_code"]);
 
                 List<Course> courses = new List<Course>();
 
@@ -269,8 +271,13 @@ namespace DatabaseProject.Controllers
             }
 
         }
+        public ActionResult requiredCoursesForm()
+        {
+            ViewBag.Semesters = new SelectList(AdvisorController.getSemesters(), "Value", "Text");
+            return View();
+        }
         /// G
-        public ActionResult missingCources(FormCollection form)
+        public ActionResult missingCourses(FormCollection form)
         {
 
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -280,8 +287,10 @@ namespace DatabaseProject.Controllers
                 SqlCommand cmd = new SqlCommand("dbo.Procedures_ViewMS", con);
                 cmd.CommandType = CommandType.Text;
 
-                cmd.Parameters.Add("@StudentID", SqlDbType.Int);
-                cmd.Parameters["@StudentID"].Value = form["student_id"];
+                //cmd.Parameters.Add("@StudentID", SqlDbType.Int);
+                //cmd.Parameters["@StudentID"].Value = form["student_id"];
+                cmd.Parameters.AddWithValue("@StudentID", Session["userID"]);
+
 
                 List<Course> courses = new List<Course>();
 
@@ -299,6 +308,11 @@ namespace DatabaseProject.Controllers
                 return View(courses);
             }
 
+        }
+        public ActionResult missingCoursesForm()
+        {
+            ViewBag.Semesters = new SelectList(AdvisorController.getSemesters(), "Value", "Text");
+            return View();
         }
         /// H
         public void sendCourseRequest(FormCollection form)

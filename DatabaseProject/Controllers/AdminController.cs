@@ -412,7 +412,7 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
-        public ActionResult semesters_offeredcourses(object sender, EventArgs e)
+        public ActionResult semesters_offeredcourses()
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -440,6 +440,7 @@ namespace DatabaseProject.Controllers
                         //  YourGridView.DataSource = dataTable;
                         //  YourGridView.DataBind();*/
                     }
+                    return View();
                 }
             }
         }

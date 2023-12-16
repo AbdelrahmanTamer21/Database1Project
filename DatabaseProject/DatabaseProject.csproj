@@ -301,6 +301,9 @@
     <Content Include="Views\Admin\AddSemesterForm.cshtml" />
     <Content Include="Views\Admin\instructor_assingedcourses.cshtml" />
     <Content Include="Views\Student\optionalCoursesForm.cshtml" />
+    <Content Include="Views\Student\availableCoursesForm.cshtml" />
+    <Content Include="Views\Student\requiredCoursesForm.cshtml" />
+    <Content Include="Views\Student\missingCoursesForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

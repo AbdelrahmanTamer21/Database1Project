@@ -1,0 +1,31 @@
+﻿
+@{
+    ViewBag.Title = "missingCoursesForm";
+}
+
+<h2>missingCoursesForm</h2>
+
+
+@using (Html.BeginForm("missingCoursesForm", "Student", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Student</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group mt-2">
+            <label class="control-label col-md-2">Semester Code</label>
+            <div class="col-md-10">
+                @Html.DropDownList("semester_code", ViewBag.Semesters as SelectList, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group mt-2">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="View" class="btn btn-default btn-primary" />
+            </div>
+        </div>
+    </div>
+}
