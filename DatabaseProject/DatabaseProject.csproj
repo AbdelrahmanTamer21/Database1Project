@@ -300,6 +300,7 @@
     <Content Include="Views\Admin\listAllAdvisors.cshtml" />
     <Content Include="Views\Admin\AddSemesterForm.cshtml" />
     <Content Include="Views\Admin\instructor_assingedcourses.cshtml" />
+    <Content Include="Views\Student\optionalCoursesForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

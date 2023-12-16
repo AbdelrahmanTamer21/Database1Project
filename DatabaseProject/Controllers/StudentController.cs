@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Web.Mvc;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace DatabaseProject.Controllers
 {
@@ -162,6 +163,12 @@ namespace DatabaseProject.Controllers
             }
         }
         /// D
+        public ActionResult optionalCoursesForm()
+        {
+            ViewBag.Semesters = new SelectList(AdvisorController.getSemesters(), "Value", "Text");
+            return View();
+        }
+
         public ActionResult optionalCourses(FormCollection form)
         {
 
