@@ -177,6 +177,7 @@
     <Compile Include="Models\Request.cs" />
     <Compile Include="Models\requestCreditHour.cs" />
     <Compile Include="Models\Semester.cs" />
+    <Compile Include="Models\sendCourseRequest.cs" />
     <Compile Include="Models\Slot.cs" />
     <Compile Include="Models\Student.cs" />
     <Compile Include="Models\Students_Courses_transcript.cs" />
@@ -319,6 +320,8 @@
     <Content Include="Views\Admin\AddCourseForm.cshtml" />
     <Content Include="Views\Admin\linkInstructorCourseSlot.cshtml" />
     <Content Include="Views\Student\sendCourseRequest.cshtml" />
+    <Content Include="Views\Student\sendCourseRequestForm.cshtml" />
+    <Content Include="Views\Student\sendCreditHourRequestForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
