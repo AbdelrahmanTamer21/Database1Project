@@ -1,0 +1,67 @@
+﻿@model IEnumerable<DatabaseProject.Models.GraduationPlan>
+
+@{
+    ViewBag.Title = "gradPlansWithInitAdvisors";
+}
+
+<h2>gradPlansWithInitAdvisors</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.plan_id)
+        </th>
+        <th>
+            semester_code
+        </th>
+        <th>
+            semester_credit_hours
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.expected_grad_date)
+        </th>
+        <th>
+            student_id
+        </th>
+        <th>
+            advisor_id
+        </th>
+        <th>
+            advisor_name
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        foreach (var semester in item.semesters)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.plan_id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => semester.semester_code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => semester.credit_hours)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.expected_grad_date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.student.student_id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => semester.advisor.advisor_id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => semester.advisor.name)
+                </td>
+            </tr>
+        }
+    }
+
+</table>

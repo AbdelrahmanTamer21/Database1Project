@@ -433,12 +433,12 @@ namespace DatabaseProject.Controllers
                     {
 
                         con.Close();
-                      /*  string view = "SELECT * FROM Semster_offered_Courses";
-                        SqlDataAdapter views = new SqlDataAdapter(view, con);
-                        DataTable dataTable = new DataTable();
-                        views.Fill(dataTable);
-                        //  YourGridView.DataSource = dataTable;
-                        //  YourGridView.DataBind();*/
+                        /*  string view = "SELECT * FROM Semster_offered_Courses";
+                          SqlDataAdapter views = new SqlDataAdapter(view, con);
+                          DataTable dataTable = new DataTable();
+                          views.Fill(dataTable);
+                          //  YourGridView.DataSource = dataTable;
+                          //  YourGridView.DataBind();*/
                     }
                     return View();
                 }
@@ -546,7 +546,8 @@ namespace DatabaseProject.Controllers
                     {
                         Student student = new Student();
                         student.payments = new List<Payment>();
-                        if (rdr.Read()) { 
+                        if (rdr.Read())
+                        {
                             student.student_id = Convert.ToInt32(rdr["studentID"]);
                             student.f_name = rdr["f_name"].ToString();
                             student.l_name = rdr["l_name"].ToString();
@@ -571,7 +572,8 @@ namespace DatabaseProject.Controllers
 
                         while (rdr.Read())
                         {
-                            if (Convert.ToInt32(rdr["studentID"]) != student.student_id) {
+                            if (Convert.ToInt32(rdr["studentID"]) != student.student_id)
+                            {
                                 StudentPayments.Add(student);
                                 student = new Student();
                                 student.student_id = Convert.ToInt32(rdr["studentID"]);
@@ -694,85 +696,140 @@ namespace DatabaseProject.Controllers
                 return View(students);
             }
         }
-        /*  public ActionResult gradPlansWithInitAdvisors()
-          {
-              SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+        public ActionResult gradPlansWithInitAdvisors()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
 
-              using (con)
-              {
-                  SqlCommand cmd = new SqlCommand("SELECT * FROM Advisors_Graduation_Plan", con);
-                  cmd.CommandType = CommandType.Text;
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Advisors_Graduation_Plan", con);
+                cmd.CommandType = CommandType.Text;
 
-                  con.Open();
-                  SqlDataReader rdr = cmd.ExecuteReader();
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
 
-                  List<Advisors_Graduation_Plan> AdvGradPlan = new List<Advisors_Graduation_Plan>();
+                List<GraduationPlan> AdvGradPlan = new List<GraduationPlan  >();
+                using (rdr)
+                {
+                    GraduationPlan graduationPlan = new GraduationPlan();
+                    if (rdr.Read())
+                    {
+                        graduationPlan.plan_id = Convert.ToInt16(rdr["plan_id"]);
+                        graduationPlan.expected_grad_date = Convert.ToDateTime(rdr["expected_grad_date"]).ToShortDateString();
 
-                  while (rdr.Read())
-                  {
-                      GraduationPlan plan = new GraduationPlan();
-                      plan.plan_id = Convert.ToInt32(rdr["plan_id"]);
-                      Advisor advisor = new Advisor();
-                      advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
-                      advisor.name = rdr["advisor_name"].ToString();
+                        // Semester
+                        GraduationPlanSemester semester = new GraduationPlanSemester();
 
-                      Advisors_Graduation_Plan advisor_grad_plan = new Advisors_Graduation_Plan();
-                      advisor_grad_plan.graduation_plan = plan;
-                      advisor_grad_plan.advisor = advisor;
+                        graduationPlan.semesters = new List<GraduationPlanSemester>();
+                        semester.semester_code = rdr["semester_code"].ToString();
+                        semester.credit_hours = Convert.ToInt32(rdr["semester_credit_hours"]);
+                        semester.advisor = new Advisor();
+                        semester.advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
+                        semester.advisor.name = rdr["advisor_name"].ToString();
 
+                        graduationPlan.semesters.Add(semester);
 
-                      courses.Add(advisor_grad_plan);
-                  }
-                  rdr.Close();
-                  con.Close();
+                    }
+                    else
+                    {
+                        rdr.Close();
+                        con.Close();
+                        graduationPlan.semesters = new List<GraduationPlanSemester>();
+                        GraduationPlanSemester semester = new GraduationPlanSemester();
+                        semester.advisor = new Advisor();
+                        AdvGradPlan.Add(graduationPlan);
+                        return View(AdvGradPlan);
+                    }
 
-                  return View(AdvGradPlan);
-              }
-          }*/
-        /* public ActionResult AllStudentsTranscript()
-         {
-             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+                    while (rdr.Read())
+                    {
+                        if (Convert.ToInt32(rdr["plan_id"]) != graduationPlan.plan_id)
+                        {
+                            AdvGradPlan.Add(graduationPlan);
+                            graduationPlan = new GraduationPlan();
+                            graduationPlan.plan_id = Convert.ToInt16(rdr["plan_id"]);
+                            graduationPlan.expected_grad_date = Convert.ToDateTime(rdr["expected_grad_date"]).ToShortDateString();
 
-             using (con)
-             {
-                 SqlCommand cmd = new SqlCommand("SELECT * FROM Students_Courses_transcript", con);
-                 cmd.CommandType = CommandType.Text;
+                            // Semester
+                            GraduationPlanSemester semester = new GraduationPlanSemester();
 
-                 con.Open();
-                 SqlDataReader rdr = cmd.ExecuteReader();
+                            graduationPlan.semesters = new List<GraduationPlanSemester>();
+                            semester.semester_code = rdr["semester_code"].ToString();
+                            semester.credit_hours = Convert.ToInt32(rdr["semester_credit_hours"]);
+                            semester.advisor = new Advisor();
+                            semester.advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
+                            semester.advisor.name = rdr["advisor_name"].ToString();
 
-                 List<Students_Courses_transcript> transcript = new List<Students_Courses_transcript>();
-                 while (rdr.Read())
-                 {
-                     Student student = new Student();
-                     student.student_id = Convert.ToInt32(rdr["student_id"]);
-                     student.f_name = rdr["f_name"].ToString();
-                     student.l_name = rdr["l_name"].ToString();
+                            graduationPlan.semesters.Add(semester);
+                        }
+                        else
+                        {
+                            // Semester
+                            if (rdr["semester_code"].ToString() != graduationPlan.semesters[graduationPlan.semesters.Count - 1].semester_code)
+                            {
+                                GraduationPlanSemester semester = new GraduationPlanSemester();
+                                semester.semester_code = rdr["semester_code"].ToString();
+                                semester.credit_hours = Convert.ToInt32(rdr["semester_credit_hours"]);
+                                semester.advisor = new Advisor();
+                                semester.advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
+                                semester.advisor.name = rdr["advisor_name"].ToString();
+                                graduationPlan.semesters.Add(semester);
+                            }
+                            else
+                            {
+                                graduationPlan.semesters[graduationPlan.semesters.Count - 1].courses.Add(new Course(Convert.ToInt32(rdr["course_id"]), rdr["name"].ToString()));
+                            }
+                        }
+                    }
+                    AdvGradPlan.Add(graduationPlan);
+                    rdr.Close();
+                    con.Close();
 
-                     Course course = new Course();
-                     course.name = rdr["name"].ToString();
+                }
+                return View(AdvGradPlan);
+            }
+        }
 
-                     /*  not sure     
-                                 Student_Instructor_Course_take take = new Student_Instructor_Course_take();
-                                 take.course_id = Convert.ToInt32(rdr["course_id"]);
-                                 take.exam_type = rdr["exam_type"].ToString();
-                                 take.grade = rdr["grade"].ToString();
-                                 take.semester_code = rdr["semester_code"].ToString(); 
-                     */
+        public ActionResult AllStudentsTranscript()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
 
-        /*      Students_Courses_transcript studentCourseTranscript = new Students_Courses_transcript();
-              studentCourseTranscript.student = student;
-              studentCourseTranscript.course = course;
-              studentCourseTranscript.student_Instructor_Course_take = take;
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Students_Courses_transcript", con);
+                cmd.CommandType = CommandType.Text;
 
-              transcript.Add(studentCourseTranscript);
-          }
-          rdr.Close();
-          con.Close();
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
 
-          return View(transcript);
-      }
-  }*/
+                List<Student_Instructor_Course_take> lstTranscript = new List<Student_Instructor_Course_take>();
+                using (rdr)
+                {
+                    while (rdr.Read())
+                    {
+                        Student_Instructor_Course_take transcript = new Student_Instructor_Course_take();
+                        transcript.student = new Student();
+                        transcript.student.student_id = Convert.ToInt32(rdr["student_id"]);
+                        transcript.student.f_name = rdr["f_name"].ToString();
+                        transcript.student.l_name = rdr["l_name"].ToString();
+
+                        transcript.course = new Course();
+                        transcript.course.course_id = Convert.ToInt32(rdr["course_id"]);
+                        transcript.course.name = rdr["name"].ToString();
+
+                        transcript.exam_type = rdr["exam_type"].ToString();
+                        transcript.grade = rdr["grade"].ToString();
+                        transcript.semester_code = rdr["semester_code"].ToString();
+
+                        lstTranscript.Add(transcript);
+                    }
+                    rdr.Close();
+                    con.Close();
+
+                }
+                return View(lstTranscript);
+            }
+        }
         /*    public ActionResult AllSemestersWithOfferedCourses()
             {
                 SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
