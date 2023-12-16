@@ -320,6 +320,17 @@
     <Content Include="Views\Admin\AddCourseForm.cshtml" />
     <Content Include="Views\Admin\linkInstructorCourseSlot.cshtml" />
     <Content Include="Views\Student\sendCourseRequest.cshtml" />
+    <Content Include="Views\Admin\linkStudentAdvisor.cshtml" />
+    <Content Include="Views\Admin\semesters_offeredcourses.cshtml" />
+    <Content Include="Views\Admin\deleteCourseForm.cshtml" />
+    <Content Include="Views\Admin\deleteCourseFromSlot.cshtml" />
+    <Content Include="Views\Admin\linkStudentInstructor.cshtml" />
+    <Content Include="Views\Admin\AddExamForm.cshtml" />
+    <Content Include="Views\Admin\AllPaymentsWithCorrStudents.cshtml" />
+    <Content Include="Views\Admin\issueInstallmentsForm.cshtml" />
+    <Content Include="Views\Admin\updateStudentStatusFrom.cshtml" />
+    <Content Include="Views\Student\sendCourseRequestForm.cshtml" />
+    <Content Include="Views\Student\sendCreditHourRequestForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

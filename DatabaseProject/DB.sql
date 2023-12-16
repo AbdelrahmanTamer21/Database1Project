@@ -1266,6 +1266,8 @@ SELECT * FROM Students_Courses_transcript
 
 SELECT * FROM Instructors_AssignedCourses
 
-SELECT * FROM Semster_offered_Courses
+SELECT * FROM Student_Payment
+
 
 SELECT * FROM Course
+SELECT student_id,f_name,l_name FROM Student
