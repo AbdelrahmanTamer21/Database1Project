@@ -163,6 +163,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Advisor.cs" />
+    <Compile Include="Models\Advisors_Graduation_Plan.cs" />
     <Compile Include="Models\Course.cs" />
     <Compile Include="Models\Course_Prerequisite.cs" />
     <Compile Include="Models\Course_Slot_Instructor.cs" />
@@ -177,6 +178,8 @@
     <Compile Include="Models\Semester.cs" />
     <Compile Include="Models\Slot.cs" />
     <Compile Include="Models\Student.cs" />
+    <Compile Include="Models\Students_Courses_transcript.cs" />
+    <Compile Include="Models\Student_Instructor_Course_Take.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -304,6 +307,8 @@
     <Content Include="Views\Student\availableCoursesForm.cshtml" />
     <Content Include="Views\Student\requiredCoursesForm.cshtml" />
     <Content Include="Views\Student\missingCoursesForm.cshtml" />
+    <Content Include="Views\Admin\AllStudentsTranscript.cshtml" />
+    <Content Include="Views\Admin\gradPlansWithInitAdvisors.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
