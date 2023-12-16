@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewBag.Title = "linkInstructorCourseSlot";
+}
+
+<h2>linkInstructorCourseSlot</h2>
+
+@using (Html.BeginForm("AdminLinkInstructor", "Admin", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Student</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group mt-2">
+            <label class="control-label col-md-2">Slot</label>
+            <div class="col-md-10">
+                @Html.DropDownList("slot_id", ViewBag.Slots as SelectList, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group mt-2">
+            <label class="control-label col-md-2">Course</label>
+            <div class="col-md-10">
+                @Html.DropDownList("course_id", ViewBag.Courses as SelectList, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group mt-2">
+            <label class="control-label col-md-2">Instructor</label>
+            <div class="col-md-10">
+                @Html.DropDownList("instructor_id", ViewBag.Instructors as SelectList, new { @class = "form-control" })
+            </div>
+        </div>
+
+
+        <div class="form-group mt-2">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Link" class="btn btn-default btn-primary" />
+            </div>
+        </div>
+    </div>
+}
