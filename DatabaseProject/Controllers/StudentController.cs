@@ -145,13 +145,15 @@ namespace DatabaseProject.Controllers
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     //set up the parameters
-                    cmd.Parameters.Add("@StudentID", SqlDbType.VarChar, 40);
-                    cmd.Parameters.Add("@mobile_number", SqlDbType.VarChar, 40);
+                    //cmd.Parameters.Add("@StudentID", SqlDbType.VarChar, 40);
+                    //cmd.Parameters.Add("@mobile_number", SqlDbType.VarChar, 40);
 
 
                     //set parameter values
-                    cmd.Parameters["@StudentID"].Value = form["student_id"];
-                    cmd.Parameters["@mobile_number"].Value = form["phone_number"];
+                    //cmd.Parameters["@StudentID"].Value = form["student_id"];
+                    //cmd.Parameters["@mobile_number"].Value = form["phone_number"];
+                    cmd.Parameters.AddWithValue("@StudentID", Session["userID"]);
+                    cmd.Parameters.AddWithValue("@mobile_number", form["phone_number"]);
 
 
                     //open connection and execute stored procedure
@@ -161,6 +163,10 @@ namespace DatabaseProject.Controllers
                     con.Close();
                 }
             }
+        }
+        public ActionResult addStudentPhoneForm()
+        {
+            return View();
         }
         /// D
         public ActionResult optionalCourses(FormCollection form)
@@ -328,14 +334,15 @@ namespace DatabaseProject.Controllers
 
                     //set up the parameters
                     cmd.Parameters.Add("@courseID", SqlDbType.VarChar, 40);
-                    cmd.Parameters.Add("@StudentID", SqlDbType.VarChar, 40);
+                    //cmd.Parameters.Add("@StudentID", SqlDbType.VarChar, 40);
                     cmd.Parameters.Add("@type", SqlDbType.VarChar, 40);
                     cmd.Parameters.Add("@comment", SqlDbType.VarChar, 40);
 
+                    cmd.Parameters.AddWithValue("@StudentID", Session["userID"]);
 
                     //set parameter values
                     cmd.Parameters["@courseID"].Value = form["course_id"];
-                    cmd.Parameters["@StudentID"].Value = form["student_id"];
+                    //cmd.Parameters["@StudentID"].Value = form["student_id"];
                     cmd.Parameters["@type"].Value = form["type"];
                     cmd.Parameters["@comment"].Value = form["comment"];
 
@@ -347,6 +354,10 @@ namespace DatabaseProject.Controllers
                     con.Close();
                 }
             }
+        }
+        public ActionResult sendCourseRequestForm()
+        {
+            return View();
         }
         /// I
         public void sendCreditHourRequest(FormCollection form)
