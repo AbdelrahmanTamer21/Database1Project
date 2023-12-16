@@ -251,7 +251,7 @@ namespace DatabaseProject.Controllers
             using (con)
             {
                 SqlCommand cmd = new SqlCommand("dbo.Procedures_ViewRequiredCourses", con);
-                cmd.CommandType = CommandType.Text;
+                cmd.CommandType = CommandType.StoredProcedure;
 
                 //cmd.Parameters.Add("@current_semester_code", SqlDbType.Int);
                 //cmd.Parameters.Add("@StudentID", SqlDbType.Int);
@@ -291,7 +291,7 @@ namespace DatabaseProject.Controllers
             using (con) 
             {
                 SqlCommand cmd = new SqlCommand("dbo.Procedures_ViewMS", con);
-                cmd.CommandType = CommandType.Text;
+                cmd.CommandType = CommandType.StoredProcedure;
 
                 //cmd.Parameters.Add("@StudentID", SqlDbType.Int);
                 //cmd.Parameters["@StudentID"].Value = form["student_id"];
