@@ -18,40 +18,32 @@
             @Html.DisplayNameFor(model => model.name)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.email)
+            course_id
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.office)
+            course_name
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.faculty)
-        </th>
-        <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.instructor_id)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.office)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.faculty)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        foreach (var course in item.courses)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.instructor_id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => course.course_id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => course.name)
+                </td>
+            </tr>
+        }
+    }
 
 </table>

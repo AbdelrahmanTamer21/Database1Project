@@ -9,6 +9,7 @@ namespace DatabaseProject.Models
     public class Advisor
     {
         public int advisor_id { get; set; }
+        [Required(ErrorMessage = "The name is required")]
         public string name { get; set; }
         [Required(ErrorMessage = "The email address is required")]
         [EmailAddress(ErrorMessage = "Invalid email address")]

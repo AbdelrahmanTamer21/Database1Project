@@ -312,6 +312,8 @@
     <Content Include="Views\Student\sendCreditHourRequest.cshtml" />
     <Content Include="Views\Student\sendCreditHourRequestForm.cshtml" />
     <Content Include="Views\Student\missingCourses.cshtml" />
+    <Content Include="Views\Admin\AllActiveStudent.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

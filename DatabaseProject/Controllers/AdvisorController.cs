@@ -99,7 +99,7 @@ namespace DatabaseProject.Controllers
 
                         //get the output variable
                         int id = Convert.ToInt32(cmd.Parameters["@Advisor_id"].Value);
-                        TempData["Alert"] = "New Student ID: " + id;
+                        TempData["Alert"] = "New Advisor ID: " + id;
                         con.Close();
                         return RedirectToAction("Index");
                     }
