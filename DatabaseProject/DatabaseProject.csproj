@@ -297,6 +297,7 @@
     <Content Include="Views\Student\addStudentPhone.cshtml" />
     <Content Include="Views\Student\Register.cshtml" />
     <Content Include="Views\Student\Login.cshtml" />
+    <Content Include="Views\Student\optionalCoursesForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

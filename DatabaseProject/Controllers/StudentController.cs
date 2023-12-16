@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Web.Mvc;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace DatabaseProject.Controllers
 {
@@ -162,6 +163,12 @@ namespace DatabaseProject.Controllers
             }
         }
         /// D
+        public ActionResult optionalCoursesForm()
+        {
+            ViewBag.Semesters = new SelectList(AdvisorController.getSemesters(), "Value", "Text");
+            return View();
+        }
+
         public ActionResult optionalCourses(FormCollection form)
         {
 
@@ -173,8 +180,9 @@ namespace DatabaseProject.Controllers
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 cmd.Parameters.Add("@StudentID", SqlDbType.Int);
-                cmd.Parameters.Add("@current_semester_code", SqlDbType.Int);
-                cmd.Parameters["@StudentID"].Value = form["student_id"];
+                cmd.Parameters.Add("@current_semester_code", SqlDbType.VarChar, 40);
+                Debug.Write("ID" + Session["userID"]);
+                cmd.Parameters["@StudentID"].Value = Session["userID"];
                 cmd.Parameters["@current_semester_code"].Value = form["semester_code"];
 
                 List<Course> courses = new List<Course>();
