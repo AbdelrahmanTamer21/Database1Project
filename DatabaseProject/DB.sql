@@ -1261,7 +1261,5 @@ GO
 
 --//////////////////////////////////////////////////////////////////////////////////////////////
 --EXEC Procedures_CreateAllTables
-
-
 SELECT * FROM Advisors_Graduation_Plan
 SELECT * FROM Students_Courses_transcript

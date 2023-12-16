@@ -1,4 +1,5 @@
 ﻿using DatabaseProject.Models;
+using Microsoft.Ajax.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -676,18 +677,31 @@ namespace DatabaseProject.Controllers
                     student.f_name = rdr["f_name"].ToString();
                     student.l_name = rdr["l_name"].ToString();
                     student.password = rdr["password"].ToString();
-                    student.gpa = Convert.ToDecimal(rdr["gpa"]);
+                    if (rdr["gpa"] != DBNull.Value)
+                    {
+                        student.gpa = Convert.ToDecimal(rdr["gpa"]);
+                    }
                     student.faculty = rdr["faculty"].ToString();
                     student.email = rdr["email"].ToString();
                     student.major = rdr["major"].ToString();
-                    student.financial_status = Convert.ToBoolean(rdr["financial_status"]);
+                    if (rdr["financial_status"] != DBNull.Value)
+                    {
+                        student.financial_status = Convert.ToBoolean(rdr["financial_status"]);
+                    }
                     student.semester = Convert.ToInt32(rdr["semester"]);
-                    student.acquired_hours = Convert.ToInt32(rdr["acquired_hours"]);
-                    student.assigned_hours = Convert.ToInt32(rdr["assigned_hours"]);
+                    if (rdr["acquired_hours"] != DBNull.Value)
+                    {
+                        student.acquired_hours = Convert.ToInt32(rdr["acquired_hours"]);
+                    }
+                    if (rdr["assigned_hours"] != DBNull.Value)
+                    {
+                        student.assigned_hours = Convert.ToInt32(rdr["assigned_hours"]);
+                    }
                     student.advisor = new Advisor();
-                    student.advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
-
-
+                    if (rdr["advisor_id"] != DBNull.Value)
+                    {
+                        student.advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
+                    }
                     students.Add(student);
                 }
                 rdr.Close();
