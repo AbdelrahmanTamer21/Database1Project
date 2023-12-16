@@ -310,7 +310,6 @@
     <Content Include="Views\Admin\AllStudentsTranscript.cshtml" />
     <Content Include="Views\Admin\gradPlansWithInitAdvisors.cshtml" />
     <Content Include="Views\Student\sendCreditHourRequest.cshtml" />
-    <Content Include="Views\Student\sendCreditHourRequestForm.cshtml" />
     <Content Include="Views\Student\missingCourses.cshtml" />
     <Content Include="Views\Admin\AllActiveStudent.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
@@ -319,6 +318,7 @@
     <Content Include="Views\Admin\AdminListPendingRequests.cshtml" />
     <Content Include="Views\Admin\AddCourseForm.cshtml" />
     <Content Include="Views\Admin\linkInstructorCourseSlot.cshtml" />
+    <Content Include="Views\Student\sendCourseRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
