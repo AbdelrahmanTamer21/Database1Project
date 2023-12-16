@@ -107,12 +107,12 @@ namespace DatabaseProject.Controllers
                          
                             student.advisor = new Advisor();
                             student.advisor.advisor_id = Convert.ToInt16(rdr["advisor_id"]);
-                            student.advisor.name = rdr["Advisor"].ToString();
+                            student.advisor.name = rdr["advisor_name"].ToString();
                             lstStudent.Add(student);
                         }
                     }
                     con.Close();
-                    return view(lstStudent);
+                    return View(lstStudent);
                 }
             }
         }
@@ -123,7 +123,7 @@ namespace DatabaseProject.Controllers
             using (con)
             {
                 SqlCommand cmd = new SqlCommand("SELECT * FROM all_Pending_Requests", con);
-                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.Text;
                 List<Request> lstRequest = new List<Request>();
                 using (cmd)
                 {
@@ -154,10 +154,9 @@ namespace DatabaseProject.Controllers
                                     break;
                             }
                             request.student = new Student();
-                            request.student.f_name = rdr["f_name"].ToString();
-                            request.student.l_name = rdr["l_name"].ToString();
+                            request.student.student_id = Convert.ToInt32(rdr["student_id"]);
                             request.advisor = new Advisor();
-                            request.advisor.name = rdr["name"].ToString();
+                            request.advisor.advisor_id = Convert.ToInt32(rdr["advisor_id"]);
                             lstRequest.Add(request);
                         }
                     }
@@ -207,28 +206,23 @@ namespace DatabaseProject.Controllers
         {
             return View();
         }
-        private ActionResult AddCourse(FormCollection form)
+        public ActionResult AddCourse(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
             {
-                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdvisorAddCourseGP", con);
+                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdminAddingCourse", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 using (cmd)
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     //set up the parameters
-                    cmd.Parameters.Add("@student_id", SqlDbType.Int);
-                    cmd.Parameters.Add("@Semester_code", SqlDbType.VarChar, 40);
-                    cmd.Parameters.Add("@course_name", SqlDbType.VarChar, 40);
-                    //state ouput variable
-                    cmd.Parameters.Add("@semester_code", SqlDbType.Int).Direction = ParameterDirection.Output;
-
-                    //set parameter values
-                    cmd.Parameters["@student_id"].Value = form["student_id"];
-                    cmd.Parameters["@Semester_code"].Value = form["Semester_code"];
-                    cmd.Parameters["@course_name"].Value = form["course_name"];
+                    cmd.Parameters.AddWithValue("@major", form["major"]);
+                    cmd.Parameters.AddWithValue("@semester", form["semester"]);
+                    cmd.Parameters.AddWithValue("@credit_hours", form["credit_hours"]);
+                    cmd.Parameters.AddWithValue("@name", form["name"]);
+                    cmd.Parameters.AddWithValue("@is_offered", Convert.ToBoolean(form["is_offered"].ToString().Split(',')[0]));
 
                     //open connection and execute stored procedure
                     con.Open();
@@ -373,7 +367,7 @@ namespace DatabaseProject.Controllers
                     cmd.ExecuteNonQuery();
 
                     con.Close();
-
+                    return RedirectToAction("Index");
                 }
 
             }
@@ -415,7 +409,7 @@ namespace DatabaseProject.Controllers
                     cmd.ExecuteNonQuery();
 
                     con.Close();
-
+                    return RedirectToAction("Index");
                 }
 
             }
@@ -492,6 +486,9 @@ namespace DatabaseProject.Controllers
                 List<Semester> semesters = new List<Semester>();
                 using (cmd)
                 {
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    SqlDataReader rdr = cmd.ExecuteReader();
                     Semester semester = new Semester();
                     semester.courses = new List<Course>();
                     if (rdr.Read())
@@ -715,6 +712,10 @@ namespace DatabaseProject.Controllers
                     con.Close();
                 }
             }
+        }
+        public ActionResult updateStudentStatusForm()
+        {
+            return View();
         }
         public void updateStudentStatus(FormCollection form)
         {
