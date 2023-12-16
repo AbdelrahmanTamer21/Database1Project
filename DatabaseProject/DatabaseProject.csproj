@@ -177,7 +177,6 @@
     <Compile Include="Models\Request.cs" />
     <Compile Include="Models\requestCreditHour.cs" />
     <Compile Include="Models\Semester.cs" />
-    <Compile Include="Models\sendCourseRequest.cs" />
     <Compile Include="Models\Slot.cs" />
     <Compile Include="Models\Student.cs" />
     <Compile Include="Models\Students_Courses_transcript.cs" />
@@ -292,7 +291,6 @@
     <Content Include="Views\Advisor\PendingRequests.cshtml" />
     <Content Include="Views\Advisor\UpdateGradPlan.cshtml" />
     <Content Include="Views\Student\RegisterSecondMakeupForm.cshtml" />
-    <Content Include="Views\Student\ChooseInstructor.cshtml" />
     <Content Include="Views\Student\ChooseInstructorForm.cshtml" />
     <Content Include="Views\Student\Index.cshtml" />
     <Content Include="Views\Student\optionalCourses.cshtml" />
@@ -320,17 +318,7 @@
     <Content Include="Views\Admin\AddCourseForm.cshtml" />
     <Content Include="Views\Admin\linkInstructorCourseSlot.cshtml" />
     <Content Include="Views\Student\sendCourseRequest.cshtml" />
-    <Content Include="Views\Admin\linkStudentAdvisor.cshtml" />
-    <Content Include="Views\Admin\semesters_offeredcourses.cshtml" />
-    <Content Include="Views\Admin\deleteCourseForm.cshtml" />
-    <Content Include="Views\Admin\deleteCourseFromSlot.cshtml" />
-    <Content Include="Views\Admin\linkStudentInstructor.cshtml" />
-    <Content Include="Views\Admin\AddExamForm.cshtml" />
-    <Content Include="Views\Admin\AllPaymentsWithCorrStudents.cshtml" />
-    <Content Include="Views\Admin\issueInstallmentsForm.cshtml" />
-    <Content Include="Views\Admin\updateStudentStatusFrom.cshtml" />
-    <Content Include="Views\Student\sendCourseRequestForm.cshtml" />
-    <Content Include="Views\Student\sendCreditHourRequestForm.cshtml" />
+    <Content Include="Views\Student\ViewSlotsForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

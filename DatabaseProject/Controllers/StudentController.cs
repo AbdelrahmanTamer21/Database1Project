@@ -414,7 +414,7 @@ namespace DatabaseProject.Controllers
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.Add("@student_id", SqlDbType.Int);
-                cmd.Parameters["@student_id"].Value = Session["userID"];
+                cmd.Parameters["@student_id"].Value = Convert.ToInt32(Session["userID"]);
 
                 con.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -423,7 +423,7 @@ namespace DatabaseProject.Controllers
                 if (rdr.HasRows)
                 {
                     rdr.Read();
-                    graduationPlan.plan_id = Convert.ToInt16(rdr["plan_id"]);
+                    graduationPlan.plan_id = Convert.ToInt32(rdr["plan_id"]);
                     graduationPlan.expected_grad_date = Convert.ToDateTime(rdr["expected_grad_date"]).ToShortDateString();
                     graduationPlan.student = new Student();
                     graduationPlan.student.student_id = Convert.ToInt32(rdr["student_id"]);
@@ -489,7 +489,7 @@ namespace DatabaseProject.Controllers
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.Add("@student_id", SqlDbType.Int);
-                cmd.Parameters["@student_id"].Value = Session["userID"];
+                cmd.Parameters["@student_id"].Value = Convert.ToInt32(Session["userID"]);
 
                 List<Installment> installments = new List<Installment>();
 
@@ -631,7 +631,7 @@ namespace DatabaseProject.Controllers
                 cmd.Parameters.Add("@result", SqlDbType.Bit).Direction = ParameterDirection.Output;
 
                 // set parameter values
-                cmd.Parameters["@StudentID"].Value = Convert.ToInt32(form["student_id"]);
+                cmd.Parameters["@StudentID"].Value = Convert.ToInt32(Session["userID"]);
                 cmd.Parameters["@courseID"].Value = Convert.ToInt32(form["course_id"]);
                 cmd.Parameters["@studentCurr_sem"].Value = form["studentCurr_sem"];
 
@@ -647,9 +647,9 @@ namespace DatabaseProject.Controllers
                 }
                 else
                 {
-                    TempData["Alert"] = "You couldn't register for the first makeup exam.";
+                    TempData["Alert"] = "You couldn't register for the second makeup exam.";
                     con.Close();
-                    return RedirectToAction("RegisterFirstMakeupForm");
+                    return RedirectToAction("RegisterSecondMakeupForm");
                 }
             }
         }
@@ -704,19 +704,25 @@ namespace DatabaseProject.Controllers
 
         // G
         // View the slots of a certain course that is taught by a certain instructor.
+        public ActionResult ViewSlotsForm()
+        {
+            ViewBag.Courses = new SelectList(AdvisorController.getCourseIDs(), "Value", "Text");
+            ViewBag.Instructors = new SelectList(AdvisorController.getInstructorIDs(), "Value", "Text");
+            return View();
+        }
         public ActionResult ViewSlots(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
 
             using (con)
             {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM dbo.FN_StudentViewSlot(@course_id, instructor_id)", con);
+                SqlCommand cmd = new SqlCommand("SELECT * FROM dbo.FN_StudentViewSlot(@course_id, @instructor_id)", con);
                 cmd.CommandType = CommandType.Text;
 
                 cmd.Parameters.Add("@course_id", SqlDbType.Int);
                 cmd.Parameters.Add("@instructor_id", SqlDbType.Int);
-                cmd.Parameters["@course_id"].Value = form["course_id"];
-                cmd.Parameters["@instructor_id"].Value = form["instructor_id"];
+                cmd.Parameters["@course_id"].Value = Convert.ToInt32(form["course_id"]);
+                cmd.Parameters["@instructor_id"].Value = Convert.ToInt32(form["instructor_id"]);
 
                 con.Open();
                 SqlDataReader rdr = cmd.ExecuteReader();
@@ -760,6 +766,9 @@ namespace DatabaseProject.Controllers
         // Choose the instructor for a certain course
         public ActionResult ChooseInstructorForm()
         {
+            ViewBag.Courses = new SelectList(AdvisorController.getCourseIDs(), "Value", "Text");
+            ViewBag.Instructors = new SelectList(AdvisorController.getInstructorIDs(), "Value", "Text");
+            ViewBag.Semesters = new SelectList(AdvisorController.getSemesters(), "Value", "Text");
             return View();
         }
         public ActionResult ChooseInstructor(FormCollection form)
@@ -780,7 +789,7 @@ namespace DatabaseProject.Controllers
 
 
                 // set parameter values
-                cmd.Parameters["@StudentID"].Value = Convert.ToInt32(form["student_id"]);
+                cmd.Parameters["@StudentID"].Value = Convert.ToInt32(Session["userID"]);
                 cmd.Parameters["@courseID"].Value = Convert.ToInt32(form["course_id"]);
                 cmd.Parameters["@instructorID"].Value = Convert.ToInt32(form["instructor_id"]);
                 cmd.Parameters["@current_semester_code"].Value = form["current_semester_code"];
@@ -789,10 +798,11 @@ namespace DatabaseProject.Controllers
                 con.Open();
                 cmd.ExecuteNonQuery();
 
-                ViewBag.Message = "You have successfully chosen the instructor for the course.";
+                TempData["Alert"] = "You have successfully chosen the instructor for the course.";
 
                 con.Close();
-                return View();
+
+                return RedirectToAction("Index");
             }
         }
 
