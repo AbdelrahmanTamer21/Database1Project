@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -9,6 +10,8 @@ namespace DatabaseProject.Models
     {
         public int advisor_id { get; set; }
         public string name { get; set; }
+        [Required(ErrorMessage = "The email address is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
         public string email { get; set; }
         public string office { get; set; }
         public string password { get; set; }

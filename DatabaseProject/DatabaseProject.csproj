@@ -171,10 +171,13 @@
     <Compile Include="Models\Installment.cs" />
     <Compile Include="Models\Instructor.cs" />
     <Compile Include="Models\MakeUp_Exam.cs" />
+    <Compile Include="Models\Payment.cs" />
     <Compile Include="Models\phoneNumber.cs" />
     <Compile Include="Models\Request.cs" />
+    <Compile Include="Models\Semester.cs" />
     <Compile Include="Models\Slot.cs" />
     <Compile Include="Models\Student.cs" />
+    <Compile Include="Models\Student_Payment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

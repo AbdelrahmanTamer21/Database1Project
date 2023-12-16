@@ -1265,3 +1265,5 @@ GO
 
 
 
+
+SELECT * FROM Student_Payment

@@ -508,41 +508,69 @@ namespace DatabaseProject.Controllers
             {
                 SqlCommand cmd = new SqlCommand("SELECT * FROM Student_Payment", con);
                 cmd.CommandType = CommandType.Text;
-
-                con.Open();
-                SqlDataReader rdr = cmd.ExecuteReader();
-
-                List<Student_Payment> StudentPayments = new List<Student_Payment>();
-
-                while (rdr.Read())
+                using (cmd)
                 {
-                    Student student = new Student();
-                    student.student_id = Convert.ToInt32(rdr["StudentID"]);
-                    student.f_name = rdr["f_name"].ToString();
-                    student.l_name = rdr["l_name"].ToString();
-                    Payment payment = new Payment();
-                    Payment.payment_id = Convert.ToInt32(rdr["payment_id"]);
-                    Payment.amount = Convert.ToInt32(rdr["amount"]);
-                    // datetime?   Payment.startdate = rdr["startdate"].ToString();
-                    // datetime?   Payment.deadline = rdr["deadline"].ToString();
-                    Payment.n_installments = Convert.ToInt32(rdr["n_installments"]);
-                    Payment.fund_percentage = Convert.ToDecimal(rdr["fund_percentage"]);
-                    Payment.status = rdr["status"].ToString();
+                    con.Open();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+                    List<Student> StudentPayments = new List<Student>();
+                    using (rdr)
+                    {
+                        Student student = new Student();
+                        student.payments = new List<Payment>();
+                        if (rdr.Read()) { 
+                            student.student_id = Convert.ToInt32(rdr["studentID"]);
+                            student.f_name = rdr["f_name"].ToString();
+                            student.l_name = rdr["l_name"].ToString();
+                            Payment payment = new Payment();
+                            payment.payment_id = Convert.ToInt32(rdr["payment_id"]);
+                            payment.amount = Convert.ToInt32(rdr["amount"]);
+                            payment.startdate = Convert.ToDateTime(rdr["startdate"]);
+                            payment.deadline = Convert.ToDateTime(rdr["deadline"]);
+                            payment.n_installments = Convert.ToInt32(rdr["n_installments"]);
+                            payment.fund_percentage = Convert.ToDecimal(rdr["fund_percentage"]);
+                            payment.status = rdr["status"].ToString();
+                            payment.semester = new Semester();
+                            payment.semester.semester_code = rdr["semester_code"].ToString();
+                            student.payments.Add(payment);
+                        }
+                        else
+                        {
+                            con.Close();
+                            StudentPayments.Add(student);
+                            return View(StudentPayments);
+                        }
+
+                        while (rdr.Read())
+                        {
+                            if (Convert.ToInt32(rdr["studentID"]) != student.student_id) {
+                                StudentPayments.Add(student);
+                                student = new Student();
+                                student.student_id = Convert.ToInt32(rdr["studentID"]);
+                                student.f_name = rdr["f_name"].ToString();
+                                student.l_name = rdr["l_name"].ToString();
+                            }
+                            Payment payment = new Payment();
+                            payment.payment_id = Convert.ToInt32(rdr["payment_id"]);
+                            payment.amount = Convert.ToInt32(rdr["amount"]);
+                            payment.startdate = Convert.ToDateTime(rdr["startdate"]);
+                            payment.deadline = Convert.ToDateTime(rdr["deadline"]);
+                            payment.n_installments = Convert.ToInt32(rdr["n_installments"]);
+                            payment.fund_percentage = Convert.ToDecimal(rdr["fund_percentage"]);
+                            payment.status = rdr["status"].ToString();
+                            payment.semester = new Semester();
+                            payment.semester.semester_code = rdr["semester_code"].ToString();
+                            student.payments.Add(payment);
 
 
+                            StudentPayments.Add(student);
+                        }
+                        StudentPayments.Add(student);
+                    }
+                    con.Close();
 
-
-                    Student_Payment student_payment = new Student_Payment();
-                    student_payment.student = student;
-                    student_payment.payment = payment;
-
-
-                    StudentPayments.Add(student_payment);
+                    return View(StudentPayments);
                 }
-                rdr.Close();
-                con.Close();
-
-                return View(StudentPayments);
             }
         }
         public void issueInstallments(FormCollection form)
