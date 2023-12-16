@@ -1267,3 +1267,5 @@ GO
 
 
 SELECT * FROM Student
+
+SELECT * FROM Instructors_AssignedCourses

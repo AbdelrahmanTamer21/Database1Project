@@ -45,7 +45,7 @@ namespace DatabaseProject.Controllers
             }
 
         }
-        private List<Advisor> listAllAdvisors()
+        public ActionResult listAllAdvisors()
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -75,7 +75,7 @@ namespace DatabaseProject.Controllers
                         }
                     }
                     con.Close();
-                    return lstAdviors;
+                    return View(lstAdviors);
                 }
             }
         }
@@ -172,13 +172,16 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
-
-        private ActionResult AddSemester(FormCollection form)
+        public ActionResult AddSemesterForm()
+        {
+            return View();
+        }
+        public ActionResult AddSemester(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
             {
-                SqlCommand cmd = new SqlCommand("dbo.Procedures_AdminAddingSemester", con);
+                SqlCommand cmd = new SqlCommand("dbo.AdminAddingSemester", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 using (cmd)
                 {
@@ -188,8 +191,6 @@ namespace DatabaseProject.Controllers
                     cmd.Parameters.Add("@start_date", SqlDbType.Date);
                     cmd.Parameters.Add("@end_date", SqlDbType.Date);
                     cmd.Parameters.Add("@semester_code", SqlDbType.VarChar, 40);
-                    //state ouput variable
-                    cmd.Parameters.Add("@semester_code", SqlDbType.Int).Direction = ParameterDirection.Output;
 
                     //set parameter values
                     cmd.Parameters["@start_date"].Value = form["start_date"];
@@ -352,7 +353,7 @@ namespace DatabaseProject.Controllers
             }
 
         }
-        private void instructor_assingedcourses(object sender, EventArgs e)
+        public ActionResult instructor_assingedcourses()
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -365,7 +366,7 @@ namespace DatabaseProject.Controllers
                 using (cmd)
                 {
                     //set up parameteres
-                    //   cmd.Parameters.AddWithValue("@instructor_id", instructor_id);
+                    List<Instructor> instructors = new List<Instructor>();
 
                     //open connection and execute stored procedure
                     con.Open();
@@ -373,19 +374,45 @@ namespace DatabaseProject.Controllers
 
                     using (SqlDataReader rdr = cmd.ExecuteReader())
                     {
+                        Instructor instructor = new Instructor();
+                        instructor.courses = new List<Course>();
+                        if (rdr.Read())
+                        {
+                            instructor.instructor_id = Convert.ToInt32(rdr["instructor_id"]);
+                            instructor.name = rdr["Instructor"].ToString();
+                            Course course = new Course();
+                            course.course_id = Convert.ToInt32(rdr["course_id"]);
+                            course.name = rdr["Course"].ToString();
+                            instructor.courses.Add(course);
+                        }
+                        else
+                        {
+                            con.Close();
+                            instructors.Add(instructor);
+                            return View(instructors);
+                        }
+                        while (rdr.Read())
+                        {
+                            if (Convert.ToInt32(rdr["instructor_id"]) != instructor.instructor_id)
+                            {
+                                instructor = new Instructor();
+                                instructor.instructor_id = Convert.ToInt32(rdr["instructor_id"]);
+                                instructor.name = rdr["Instructor"].ToString();
+                            }
+                            Course course = new Course();
+                            course.course_id = Convert.ToInt32(rdr["course_id"]);
+                            course.name = rdr["Course"].ToString();
+                            instructor.courses.Add(course);
+                        }
+                        instructors.Add(instructor);
 
                     }
                     con.Close();
-                    /*string view = "SELECT * FROM Semster_offered_Courses";
-                    SqlDataAdapter views = new SqlDataAdapter(view, con);
-                    DataTable dataTable = new DataTable();
-                    views.Fill(dataTable);
-                    //  YourGridView.DataSource = dataTable;
-                    //  YourGridView.DataBind();*/
+                    return View(instructors);
                 }
             }
         }
-        private void semesters_offeredcourses(object sender, EventArgs e)
+        public ActionResult semesters_offeredcourses(object sender, EventArgs e)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
