@@ -1,0 +1,43 @@
+﻿@model IEnumerable<DatabaseProject.Models.Semester>
+
+@{
+    ViewBag.Title = "semesters_offeredcourses";
+}
+
+<h2>semesters_offeredcourses</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            course_id
+        </th>
+        <th>
+            name
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.semester_code)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        foreach (var course in item.courses)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => course.course_id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => course.name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.semester_code)
+                </td>
+            </tr>
+        }
+    }
+
+</table>

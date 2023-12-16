@@ -21,7 +21,11 @@ namespace DatabaseProject.Controllers
         // GET: Admin
         public ActionResult Index()
         {
-            return View();
+            if (Session["type"] == "Admin" && Session["userID"] != null)
+            {
+                return View();
+            }
+            return RedirectToAction("Login");
         }
 
         public ActionResult Login()
@@ -341,6 +345,71 @@ namespace DatabaseProject.Controllers
         {
             return View();
         }
+        public ActionResult linkStudentAdvisor()
+        {
+            ViewBag.Students = new SelectList(getStudents(), "Value", "Text");
+            ViewBag.Advisors = new SelectList(getAdvisors(), "Value", "Text");
+            return View();
+        }
+
+        public List<SelectListItem> getStudents()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT student_id,f_name,l_name FROM Student", con);
+                cmd.CommandType = CommandType.Text;
+                List<SelectListItem> list = new List<SelectListItem>();
+                using (cmd)
+                {
+                    //open connection and execute query
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        list.Add(new SelectListItem
+                        {
+                            Text = rdr["f_name"].ToString() + " " + rdr["l_name"].ToString(),
+                            Value = rdr["student_id"].ToString(),
+                            Selected = false
+                        });
+                    }
+                    con.Close();
+                }
+                return list;
+            }
+        }
+
+        public List<SelectListItem> getAdvisors()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT advisor_id,advisor_name FROM Advisor", con);
+                cmd.CommandType = CommandType.Text;
+                List<SelectListItem> list = new List<SelectListItem>();
+                using (cmd)
+                {
+                    //open connection and execute query
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        list.Add(new SelectListItem
+                        {
+                            Text = rdr["advisor_name"].ToString(),
+                            Value = rdr["advisor_id"].ToString(),
+                            Selected = false
+                        });
+                    }
+                    con.Close();
+                }
+                return list;
+            }
+        }
+
         public ActionResult AdminLinkStudentToAdvisor(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -355,8 +424,6 @@ namespace DatabaseProject.Controllers
                     //set up the parameters
                     cmd.Parameters.Add("@studentID", SqlDbType.Int);
                     cmd.Parameters.Add("@advisorID", SqlDbType.Int);
-                    //state ouput variable
-                    cmd.Parameters.Add("@semester_code", SqlDbType.Int).Direction = ParameterDirection.Output;
 
                     //set parameter values
                     cmd.Parameters["@studentID"].Value = form["studentID"];
@@ -373,8 +440,12 @@ namespace DatabaseProject.Controllers
             }
 
         }
-        public ActionResult student_course_instructorForm()
+        public ActionResult linkStudentInstructor()
         {
+            ViewBag.Courses = new SelectList(AdvisorController.getCourseIDs(), "Value", "Text");
+            ViewBag.Instructors = new SelectList(getInstructors(), "Value", "Text");
+            ViewBag.Students = new SelectList(getStudents(), "Value", "Text");
+            ViewBag.Semesters = new SelectList(AdvisorController.getSemesters(), "Value", "Text");
             return View();
         }
         public ActionResult student_course_instructor(FormCollection form)
@@ -386,23 +457,12 @@ namespace DatabaseProject.Controllers
                 cmd.CommandType = CommandType.StoredProcedure;
                 using (cmd)
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
 
                     //set up the parameters
-                    cmd.Parameters.Add("@cours_id", SqlDbType.Int);
-                    cmd.Parameters.Add("@instructor_id", SqlDbType.Int);
-                    cmd.Parameters.Add("@studentID", SqlDbType.Int);
-                    cmd.Parameters.Add("semester_code", SqlDbType.VarChar);
-
-
-                    //state ouput variable
-                    cmd.Parameters.Add("@semester_code", SqlDbType.Int).Direction = ParameterDirection.Output;
-
-                    //set parameter values
-                    cmd.Parameters["@cours_id"].Value = form["cours_id"];
-                    cmd.Parameters["@instructor_id"].Value = form["instructor_id"];
-                    cmd.Parameters["@studentID"].Value = form["studentID"];
-                    cmd.Parameters["@semester_code"].Value = form["semester_code"];
+                    cmd.Parameters.AddWithValue("@cours_id", form["course_id"]);
+                    cmd.Parameters.AddWithValue("@instructor_id", form["instructor_id"]);
+                    cmd.Parameters.AddWithValue("@studentID", form["studentID"]);
+                    cmd.Parameters.AddWithValue("semester_code", form["semester_code"]);
 
                     //open connection and execute stored procedure
                     con.Open();
@@ -528,8 +588,12 @@ namespace DatabaseProject.Controllers
             
         }
         }
-
-        public void deleteCourse(FormCollection form)
+        public ActionResult deleteCourseForm()
+        {
+            ViewBag.Courses = new SelectList(AdvisorController.getCourseIDs(), "Value", "Text");
+            return View();
+        }
+        public ActionResult deleteCourse(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -552,10 +616,16 @@ namespace DatabaseProject.Controllers
                     cmd.ExecuteNonQuery();
 
                     con.Close();
+                    return RedirectToAction("Index");
                 }
             }
         }
-        public void deleteSlots(FormCollection form)
+        public ActionResult deleteCourseFromSlot()
+        {
+            ViewBag.Semesters = new SelectList(AdvisorController.getSemesters(),"Value", "Text");
+            return View();
+        }
+        public ActionResult deleteSlots(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -578,8 +648,13 @@ namespace DatabaseProject.Controllers
                     cmd.ExecuteNonQuery();
 
                     con.Close();
+                    return RedirectToAction("Index");
                 }
             }
+        }
+        public ActionResult AddExamForm()
+        {
+            return View();
         }
         public void addMakeUpExam(FormCollection form)
         {
@@ -687,7 +762,11 @@ namespace DatabaseProject.Controllers
                 }
             }
         }
-        public void issueInstallments(FormCollection form)
+        public ActionResult issueInstallmentsForm()
+        {
+            return View();
+        }
+        public ActionResult issueInstallments(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -710,10 +789,11 @@ namespace DatabaseProject.Controllers
                     cmd.ExecuteNonQuery();
 
                     con.Close();
+                    return RedirectToAction("Index");
                 }
             }
         }
-        public void updateStudentStatus(FormCollection form)
+        public ActionResult updateStudentStatus(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -736,8 +816,13 @@ namespace DatabaseProject.Controllers
                     cmd.ExecuteNonQuery();
 
                     con.Close();
+                    return RedirectToAction("Index");
                 }
             }
+        }
+        public ActionResult updateStudentStatusForm()
+        {
+            return View();
         }
         public ActionResult AllActiveStudent()
         {
@@ -886,7 +971,6 @@ namespace DatabaseProject.Controllers
                 return View(AdvGradPlan);
             }
         }
-
         public ActionResult AllStudentsTranscript()
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -979,8 +1063,6 @@ namespace DatabaseProject.Controllers
                 return View(SemCourses);
             }
         }
-
-
 
     }
 }
