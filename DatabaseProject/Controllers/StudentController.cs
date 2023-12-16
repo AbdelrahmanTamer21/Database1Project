@@ -172,10 +172,12 @@ namespace DatabaseProject.Controllers
                 SqlCommand cmd = new SqlCommand("dbo.Procedures_ViewOptionalCourse", con);
                 cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.Add("@StudentID", SqlDbType.Int);
-                cmd.Parameters.Add("@current_semester_code", SqlDbType.Int);
-                cmd.Parameters["@StudentID"].Value = form["student_id"];
-                cmd.Parameters["@current_semester_code"].Value = form["semester_code"];
+                //cmd.Parameters.Add("@StudentID", SqlDbType.Int);
+                //cmd.Parameters.Add("@current_semester_code", SqlDbType.Int);
+                //cmd.Parameters["@StudentID"].Value = form["student_id"];
+                //cmd.Parameters["@current_semester_code"].Value = form["semester_code"];
+                cmd.Parameters.AddWithValue("@StudentID", form["student_id"]);
+                cmd.Parameters.AddWithValue("@current_semester_code", form["semester_code"]);
 
                 List<Course> courses = new List<Course>();
 
