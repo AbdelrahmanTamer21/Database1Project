@@ -26,7 +26,15 @@
         <th>
             @Html.DisplayNameFor(model => model.credit_hours)
         </th>
-        <th></th>
+        <th>
+            course_id
+        </th>
+        <th>
+            advisor_id
+        </th>
+        <th>
+            student_id
+        </th>
     </tr>
 
 @foreach (var item in Model) {
@@ -47,9 +55,13 @@
             @Html.DisplayFor(modelItem => item.credit_hours)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            @Html.DisplayFor(modelItem => item.course.course_id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.advisor.advisor_id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.student.student_id)
         </td>
     </tr>
 }

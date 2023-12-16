@@ -1261,11 +1261,11 @@ GO
 
 --//////////////////////////////////////////////////////////////////////////////////////////////
 --EXEC Procedures_CreateAllTables
-SELECT * FROM Advisors_Graduation_Plan
+SELECT * FROM all_Pending_Requests
 SELECT * FROM Students_Courses_transcript
 
 SELECT * FROM Instructors_AssignedCourses
 
 SELECT * FROM Semster_offered_Courses
 
-SELECT * FROM Slot
+SELECT * FROM Course
