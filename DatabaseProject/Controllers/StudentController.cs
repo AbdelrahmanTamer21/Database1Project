@@ -258,7 +258,7 @@ namespace DatabaseProject.Controllers
                 //cmd.Parameters["@current_semester_code"].Value = form["current_semester_code"];
                 //cmd.Parameters["@StudentID"].Value = form["student_id"];
                 cmd.Parameters.AddWithValue("@StudentID", Session["userID"]);
-                cmd.Parameters.AddWithValue("@current_semester_code", form["semester_code"]);
+                cmd.Parameters.AddWithValue("@semstercode", form["semester_code"]);
 
                 List<Course> courses = new List<Course>();
 
