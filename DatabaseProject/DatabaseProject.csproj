@@ -297,7 +297,6 @@
     <Content Include="Views\Student\optionalCourses.cshtml" />
     <Content Include="Views\Student\availableCourses.cshtml" />
     <Content Include="Views\Student\requiredCourses.cshtml" />
-    <Content Include="Views\Student\missingCources.cshtml" />
     <Content Include="Views\Student\addStudentPhone.cshtml" />
     <Content Include="Views\Student\Register.cshtml" />
     <Content Include="Views\Student\Login.cshtml" />
@@ -312,6 +311,7 @@
     <Content Include="Views\Admin\gradPlansWithInitAdvisors.cshtml" />
     <Content Include="Views\Student\sendCreditHourRequest.cshtml" />
     <Content Include="Views\Student\sendCreditHourRequestForm.cshtml" />
+    <Content Include="Views\Student\missingCourses.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
