@@ -372,14 +372,15 @@ namespace DatabaseProject.Controllers
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     //set up the parameters
-                    cmd.Parameters.Add("@StudentID", SqlDbType.VarChar, 40);
+                    //cmd.Parameters.Add("@StudentID", SqlDbType.VarChar, 40);
                     cmd.Parameters.Add("@credit_hours", SqlDbType.VarChar, 40);
                     cmd.Parameters.Add("@type", SqlDbType.VarChar, 40);
                     cmd.Parameters.Add("@comment", SqlDbType.VarChar, 40);
 
+                    cmd.Parameters.AddWithValue("@StudentID", Session["userID"]);
 
                     //set parameter values
-                    cmd.Parameters["@StudentID"].Value = form["student_id"];
+                    //cmd.Parameters["@StudentID"].Value = form["student_id"];
                     cmd.Parameters["@credit_hours"].Value = form["credit_hours"];
                     cmd.Parameters["@type"].Value = form["type"];
                     cmd.Parameters["@comment"].Value = form["comment"];
@@ -392,6 +393,10 @@ namespace DatabaseProject.Controllers
                     con.Close();
                 }
             }
+        }
+        public ActionResult sendCreditHourRequestForm()
+        {
+            return View();
         }
 
         ///////////// PART 2 /////////////
