@@ -745,6 +745,7 @@ namespace DatabaseProject.Controllers
                             {
                                 StudentPayments.Add(student);
                                 student = new Student();
+                                student.payments = new List<Payment>();
                                 student.student_id = Convert.ToInt32(rdr["studentID"]);
                                 student.f_name = rdr["f_name"].ToString();
                                 student.l_name = rdr["l_name"].ToString();
