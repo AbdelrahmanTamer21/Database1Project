@@ -177,7 +177,6 @@
     <Compile Include="Models\Semester.cs" />
     <Compile Include="Models\Slot.cs" />
     <Compile Include="Models\Student.cs" />
-    <Compile Include="Models\Student_Payment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -296,6 +295,8 @@
     <Content Include="Views\Student\requiredCourses.cshtml" />
     <Content Include="Views\Student\missingCources.cshtml" />
     <Content Include="Views\Student\addStudentPhone.cshtml" />
+    <Content Include="Views\Student\Register.cshtml" />
+    <Content Include="Views\Student\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

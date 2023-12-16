@@ -1266,4 +1266,4 @@ GO
 
 
 
-SELECT * FROM Student_Payment
+SELECT * FROM Student

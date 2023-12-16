@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Helpers;
@@ -15,6 +16,8 @@ namespace DatabaseProject.Models
         public string password { get; set; }
         public decimal gpa { get; set; }
         public string faculty { get; set; }
+        [Required(ErrorMessage = "The email address is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
         public string email { get; set; }
         public string major { get; set; }
         public bool financial_status { get; set; }

@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
 using System.Web.Mvc;
+using System.Drawing;
 
 namespace DatabaseProject.Controllers
 {
@@ -67,9 +68,67 @@ namespace DatabaseProject.Controllers
                     int id = Convert.ToInt32(cmd.Parameters["@Student_id"].Value);
 
                     con.Close();
-                    return View();
+                    return RedirectToAction("Index");
                 }
             }
+        }
+
+        /// B
+        public ActionResult loginStudent(FormCollection form)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT dbo.FN_StudentLogin(@Student_id,@password) AS Success", con);
+                cmd.CommandType = CommandType.Text;
+                using (cmd)
+                {
+                    try
+                    {
+                        int id = Convert.ToInt16(form["student_id"]);
+                    }
+                    catch (Exception ex)
+                    {
+                        TempData["LoginError"] = "ID or Password are wrong";
+                        return RedirectToAction("Login");
+                    }
+                    //set up the parameters
+                    cmd.Parameters.AddWithValue("@Student_id", form["student_id"]);
+                    cmd.Parameters.AddWithValue("@password", form["password"]);
+
+                    //open connection and execute stored procedure
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+
+
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        bool success = Convert.ToBoolean(rdr["Success"]);
+                        if (!success)
+                        {
+                            TempData["LoginError"] = "ID or Password are wrong";
+                            rdr.Close();
+                            con.Close();
+                            return RedirectToAction("Login");
+                        }
+                        else
+                        {
+                            TempData["LoginError"] = null;
+                            rdr.Close();
+                            con.Close();
+
+                            Session["userID"] = form["advisor_id"];
+                            Session["type"] = "Advisor";
+
+                            TempData["Alert"] = "Login successful";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    return RedirectToAction("Login");
+                }
+            }
+
         }
 
         /// C
@@ -129,7 +188,7 @@ namespace DatabaseProject.Controllers
                 }
                 rdr.Close();
                 con.Close();
-                
+
                 return View(courses);
             }
 
@@ -163,7 +222,7 @@ namespace DatabaseProject.Controllers
                 }
                 rdr.Close();
                 con.Close();
-            
+
                 return View(courses);
             }
 
@@ -196,7 +255,7 @@ namespace DatabaseProject.Controllers
                 }
                 rdr.Close();
                 con.Close();
-            
+
                 return View(courses);
             }
 
@@ -397,9 +456,9 @@ namespace DatabaseProject.Controllers
 
                 con.Open();
                 var rdr = cmd.ExecuteReader();
-                
+
                 while (rdr.Read())
-                { 
+                {
                     installments.Add(new Installment()
                     {
                         payment_id = Convert.ToInt32(rdr["payment_id"]),
