@@ -14,31 +14,25 @@
 <div class="form-horizontal">
     <h4>Student</h4>
     <hr />
-    <div class="form-group">
-        <label class="control-label col-md-2">Student ID</label>
-        <div class="col-md-10">
-            <input type="number" class="form-control" name="student_id" />
-        </div>
-    </div>
 
-    <div class="form-group">
+    <div class="form-group mt-2">
         <label class="control-label col-md-2">Course ID</label>
         <div class="col-md-10">
-            <input type="number" class="form-control" name="course_id" />
+            @Html.DropDownList("course_id", ViewBag.Courses as SelectList, new { @class = "form-control" })
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="control-label col-md-2">Instructor ID</label>
+    <div class="form-group mt-2">
+        <label class="control-label col-md-2">Instructor Code</label>
         <div class="col-md-10">
-            <input type="text" class="form-control" name="instructor_id" />
+            @Html.DropDownList("instructor_id", ViewBag.Instructors as SelectList, new { @class = "form-control" })
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="control-label col-md-2">Current Semester Code</label>
+    <div class="form-group mt-2">
+        <label class="control-label col-md-2">Semester Code</label>
         <div class="col-md-10">
-            <input type="text" class="form-control" name="current_semester_code" />
+            @Html.DropDownList("current_semester_code", ViewBag.Semesters as SelectList, new { @class = "form-control" })
         </div>
     </div>
 

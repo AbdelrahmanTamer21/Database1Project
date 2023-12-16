@@ -526,6 +526,35 @@ namespace DatabaseProject.Controllers
             }
         }
 
+        public static List<SelectListItem> getInstructorIDs()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT DISTINCT instructor_id,name FROM Instructor", con);
+                cmd.CommandType = CommandType.Text;
+                List<SelectListItem> list = new List<SelectListItem>();
+                using (cmd)
+                {
+                    //open connection and execute query
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        list.Add(new SelectListItem
+                        {
+                            Text = rdr["name"].ToString(),
+                            Value = rdr["course_id"].ToString(),
+                            Selected = false
+                        });
+                    }
+                    con.Close();
+                }
+                return list;
+            }
+        }
+
         public List<Student> getAssignedStudents(string major)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);

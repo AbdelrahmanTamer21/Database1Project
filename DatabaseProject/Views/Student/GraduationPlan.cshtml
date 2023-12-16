@@ -17,7 +17,7 @@
         </div>
         <div class="col">
             <p class="m-0">
-                StudentId: @Request.QueryString["student_id"]
+                StudentId: @Html.DisplayFor(model => model.student.student_id)
                 <br />
                 Student Name: @Html.DisplayFor(model => model.student.f_name) @Html.DisplayFor(model => model.student.l_name)
             </p>
