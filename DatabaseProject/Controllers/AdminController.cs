@@ -246,7 +246,72 @@ namespace DatabaseProject.Controllers
 
 
         }
-        private ActionResult AdminLinkInstructor(FormCollection form)
+        public ActionResult linkInstructorCourseSlot() {
+            ViewBag.Courses = new SelectList(AdvisorController.getCourseIDs(), "Value", "Text");
+            ViewBag.Instructors = new SelectList(getInstructors(), "Value", "Text");
+            ViewBag.Slots = new SelectList(getSlots(), "Value", "Text");
+            return View();
+        }
+
+        public List<SelectListItem> getInstructors()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT instructor_id,name FROM Instructor", con);
+                cmd.CommandType = CommandType.Text;
+                List<SelectListItem> list = new List<SelectListItem>();
+                using (cmd)
+                {
+                    //open connection and execute query
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        list.Add(new SelectListItem
+                        {
+                            Text = rdr["name"].ToString(),
+                            Value = rdr["instructor_id"].ToString(),
+                            Selected = false
+                        });
+                    }
+                    con.Close();
+                }
+                return list;
+            }
+        }
+
+        public List<SelectListItem> getSlots()
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
+            using (con)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Slot", con);
+                cmd.CommandType = CommandType.Text;
+                List<SelectListItem> list = new List<SelectListItem>();
+                using (cmd)
+                {
+                    //open connection and execute query
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        list.Add(new SelectListItem
+                        {
+                            Text = rdr["day"].ToString() + " " + rdr["time"].ToString() + " " + rdr["location"].ToString(),
+                            Value = rdr["slot_id"].ToString(),
+                            Selected = false
+                        });
+                    }
+                    con.Close();
+                }
+                return list;
+            }
+        }
+
+        public ActionResult AdminLinkInstructor(FormCollection form)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
             using (con)
@@ -263,11 +328,8 @@ namespace DatabaseProject.Controllers
                     cmd.Parameters.Add("@instructor_id", SqlDbType.Int);
                     cmd.Parameters.Add("@slot_id", SqlDbType.Int);
 
-                    //state ouput variable
-                    cmd.Parameters.Add("@slot_id", SqlDbType.Int).Direction = ParameterDirection.Output;
-
                     //set parameter values
-                    cmd.Parameters["@course_id"].Value = form["course_id"];
+                    cmd.Parameters["@cours_id"].Value = form["course_id"];
                     cmd.Parameters["@instructor_id"].Value = form["instructor_id"];
                     cmd.Parameters["@slot_id"].Value = form["slot_id"];
 

@@ -1267,3 +1267,5 @@ SELECT * FROM Students_Courses_transcript
 SELECT * FROM Instructors_AssignedCourses
 
 SELECT * FROM Semster_offered_Courses
+
+SELECT * FROM Slot
