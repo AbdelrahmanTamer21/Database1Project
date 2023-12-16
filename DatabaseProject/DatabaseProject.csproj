@@ -331,6 +331,7 @@
     <Content Include="Views\Admin\updateStudentStatusFrom.cshtml" />
     <Content Include="Views\Student\sendCourseRequestForm.cshtml" />
     <Content Include="Views\Student\sendCreditHourRequestForm.cshtml" />
+    <Content Include="Views\Admin\studentStatus.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
