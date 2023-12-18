@@ -18,13 +18,16 @@ namespace DatabaseProject.Controllers
         {
             string actionName = filterContext.ActionDescriptor.ActionName;
             HttpSessionStateBase session = filterContext.HttpContext.Session;
-            if (session != null && session["userID"] == null && actionName != "Login" && actionName != "loginAdvisor")
+            if (session != null && session["Type"] != "Advisor" && actionName != "Login" && actionName != "loginAdvisor")
             {
-                filterContext.Result = new RedirectToRouteResult(
-                    new RouteValueDictionary {
+                if (actionName != "Register" && actionName != "registerAdvisor")
+                {
+                    filterContext.Result = new RedirectToRouteResult(
+                        new RouteValueDictionary {
                                 { "Controller", "Advisor" },
                                 { "Action", "Login" }
-                                });
+                                    });
+                }
             }
         }
         // GET: Advisor
@@ -300,6 +303,7 @@ namespace DatabaseProject.Controllers
                 return graduationPlan;
             }
         }
+
         public ActionResult updateGradDateSql(FormCollection form,int student_id)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString);
@@ -560,7 +564,7 @@ namespace DatabaseProject.Controllers
                         list.Add(new SelectListItem
                         {
                             Text = rdr["name"].ToString(),
-                            Value = rdr["course_id"].ToString(),
+                            Value = rdr["instructor_id"].ToString(),
                             Selected = false
                         });
                     }

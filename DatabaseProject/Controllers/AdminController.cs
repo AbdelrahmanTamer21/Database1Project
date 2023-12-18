@@ -24,7 +24,7 @@ namespace DatabaseProject.Controllers
         {
             string actionName = filterContext.ActionDescriptor.ActionName;
             HttpSessionStateBase session = filterContext.HttpContext.Session;
-            if (session != null && session["userID"] == null && actionName != "Login" && actionName != "loginAdmin")
+            if (session != null && session["Type"] != "Admin" && actionName != "Login" && actionName != "loginAdmin")
             {
                 filterContext.Result = new RedirectToRouteResult(
                     new RouteValueDictionary {

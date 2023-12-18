@@ -10,28 +10,58 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.PrerequisiteID)
+            Course ID
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.name)
+            Name
         </th>
-        <th></th>
+        <th>
+            Major
+        </th>
+        <th>
+            Is offered
+        </th>
+        <th>
+            Credit Hours
+        </th>
+        <th>
+            Semester
+        </th>
+        <th>
+            preRequsite_course_id
+        </th>
+        <th>
+            preRequsite_course_name
+        </th>
+
     </tr>
 
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.PrerequisiteID)
+            @Html.DisplayFor(modelitem => item.course.course_id)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.name)
+            @Html.DisplayFor(modelitem => item.course.name)
         </td>
-        @foreach (var course_prop in item.course.GetType().GetProperties())
-        {
-            <td>
-                @Html.DisplayFor(modelItem => course_prop.GetValue(item, null))
-            </td>
-        }
+        <td>
+            @Html.DisplayFor(modelitem => item.course.major)
+        </td>
+        <td>
+            @Html.DisplayFor(modelitem => item.course.is_offered)
+        </td>
+        <td>
+            @Html.DisplayFor(modelitem => item.course.credit_hours)
+        </td>
+        <td>
+            @Html.DisplayFor(modelitem => item.course.semester)
+        </td>
+        <td>
+            @Html.DisplayFor(modelitem => item.prerequisiteCourse.course_id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelitem => item.prerequisiteCourse.name)
+        </td>
     </tr>
 }
 

@@ -6,33 +6,62 @@
 }
 
 <h2>ViewSlots</h2>
-
 <table class="table">
     <tr>
-        <th></th>
+        <th>
+            Course ID
+        </th>
+        <th>
+            Course name
+        </th>
+        <th>
+            Slot ID
+        </th>
+        <th>
+            Day
+        </th>
+        <th>
+            Time
+        </th>
+        <th>
+            Location
+        </th>
+        <th>
+            Instructor ID
+        </th>
+        <th>
+            Instructor Name
+        </th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        @foreach (var prop in item.course.GetType().GetProperties())
-        {
+    @foreach (var item in Model)
+    {
+        <tr>
             <td>
-                @Html.DisplayFor(modelItem => prop.GetValue(item, null))
+                @Html.DisplayFor(modelItem => item.course.course_id)
             </td>
-        }
-        @foreach (var prop in item.slot.GetType().GetProperties())
-        {
             <td>
-                @Html.DisplayFor(modelItem => prop.GetValue(item, null))
+                @Html.DisplayFor(modelItem => item.course.name)
             </td>
-        }
-        @foreach (var prop in item.instructor.GetType().GetProperties())
-        {
             <td>
-                @Html.DisplayFor(modelItem => prop.GetValue(item, null))
+                @Html.DisplayFor(modelItem => item.slot.slot_id)
             </td>
-        }
-    </tr>
-}
+            <td>
+                @Html.DisplayFor(modelItem => item.slot.day)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.slot.time)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.slot.location)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.instructor.instructor_id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.instructor.name)
+            </td>
+        </tr>
+    }
 
 </table>

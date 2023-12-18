@@ -18,13 +18,16 @@ namespace DatabaseProject.Controllers
         {
             string actionName = filterContext.ActionDescriptor.ActionName;
             HttpSessionStateBase session = filterContext.HttpContext.Session;
-            if (session != null && session["userID"] == null && actionName != "Login" && actionName != "loginStudent")
+            if (session != null && session["Type"] != "Student" && actionName != "Login" && actionName != "loginStudent")
             {
-                filterContext.Result = new RedirectToRouteResult(
-                    new RouteValueDictionary {
+                if (actionName != "Register" && actionName != "registerStudent")
+                {
+                    filterContext.Result = new RedirectToRouteResult(
+                        new RouteValueDictionary {
                                 { "Controller", "Student" },
                                 { "Action", "Login" }
-                                });
+                                    });
+                }
             }
         }
         // GET: Student
@@ -135,7 +138,7 @@ namespace DatabaseProject.Controllers
                             con.Close();
 
                             Session["userID"] = form["student_id"];
-                            Session["type"] = "Advisor";
+                            Session["type"] = "Student";
 
                             TempData["Alert"] = "Login successful";
                             return RedirectToAction("Index");
@@ -688,7 +691,7 @@ namespace DatabaseProject.Controllers
                 {
                     Course course = new Course();
                     course.course_id = Convert.ToInt32(rdr["course_id"]);
-                    course.name = rdr["name"].ToString();
+                    course.name = rdr["Course"].ToString();
 
                     Slot slot = new Slot();
                     slot.slot_id = Convert.ToInt32(rdr["slot_id"]);
@@ -698,10 +701,7 @@ namespace DatabaseProject.Controllers
 
                     Instructor instructor = new Instructor();
                     instructor.instructor_id = Convert.ToInt32(rdr["instructor_id"]);
-                    instructor.name = rdr["name"].ToString();
-                    instructor.email = rdr["email"].ToString();
-                    instructor.office = rdr["office"].ToString();
-                    instructor.faculty = rdr["faculty"].ToString();
+                    instructor.name = rdr["Instructor"].ToString();
 
                     Course_Slot_Instructor course_Slot = new Course_Slot_Instructor();
                     course_Slot.course = course;
@@ -748,7 +748,7 @@ namespace DatabaseProject.Controllers
                 {
                     Course course = new Course();
                     course.course_id = Convert.ToInt32(rdr["course_id"]);
-                    course.name = rdr["name"].ToString();
+                    course.name = rdr["Course"].ToString();
 
                     Slot slot = new Slot();
                     slot.slot_id = Convert.ToInt32(rdr["slot_id"]);
@@ -758,10 +758,7 @@ namespace DatabaseProject.Controllers
 
                     Instructor instructor = new Instructor();
                     instructor.instructor_id = Convert.ToInt32(rdr["instructor_id"]);
-                    instructor.name = rdr["name"].ToString();
-                    instructor.email = rdr["email"].ToString();
-                    instructor.office = rdr["office"].ToString();
-                    instructor.faculty = rdr["faculty"].ToString();
+                    instructor.name = rdr["Instructor"].ToString();
 
                     Course_Slot_Instructor course_Slot = new Course_Slot_Instructor();
                     course_Slot.course = course;
@@ -847,10 +844,13 @@ namespace DatabaseProject.Controllers
                     course.credit_hours = Convert.ToInt32(rdr["credit_hours"]);
                     course.semester = Convert.ToInt32(rdr["semester"]);
 
+                    Course pre = new Course();
+                    pre.course_id = Convert.ToInt32(rdr["preRequsite_course_id"]);
+                    pre.name = rdr["preRequsite_course_name"].ToString();
+
                     Course_Prerequisite course_Prerequisite = new Course_Prerequisite();
-                    course_Prerequisite.PrerequisiteID = Convert.ToInt32(rdr["preRequsite_course_id"]);
-                    course_Prerequisite.name = rdr["preRequsite_course_name"].ToString();
                     course_Prerequisite.course = course;
+                    course_Prerequisite.prerequisiteCourse = pre;
 
                     courses.Add(course_Prerequisite);
                 }
